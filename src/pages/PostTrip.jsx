@@ -58,6 +58,10 @@ export default function PostTrip() {
       toast.error("Please enter driver name and bus number");
       return;
     }
+    if (!noStudentsLeft) {
+      toast.error("You must confirm no students were left on the bus");
+      return;
+    }
     setSubmitting(true);
     await base44.entities.Inspection.create({
       driver_name: driverName,
