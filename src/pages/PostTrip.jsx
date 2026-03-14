@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { CheckCircle2, Send, Loader2, UserCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -27,6 +29,11 @@ export default function PostTrip() {
   const [postConcerns, setPostConcerns] = useState("");
   const [postRemarks, setPostRemarks] = useState("");
   const [numTransported, setNumTransported] = useState("");
+
+  const { data: buses = [] } = useQuery({
+    queryKey: ["buses"],
+    queryFn: () => base44.entities.Bus.filter({ is_active: true }, "bus_number")
+  });
 
   useEffect(() => {
     async function loadUser() {
@@ -91,7 +98,26 @@ export default function PostTrip() {
           <h2 className="text-sm font-bold text-slate-700 uppercase tracking-wide">Vehicle Information</h2>
           <Input placeholder="Driver Name" value={driverName} onChange={(e) => setDriverName(e.target.value)} className="h-12 rounded-xl" />
           <div className="grid grid-cols-2 gap-3">
-            <Input placeholder="Bus #" value={busNumber} onChange={(e) => setBusNumber(e.target.value)} className="h-12 rounded-xl" />
+            {buses.length > 0 ? (
+              <Select value={busNumber} onValueChange={(value) => {
+                setBusNumber(value);
+                const selectedBus = buses.find(b => b.bus_number === value);
+                if (selectedBus) setIsECBus(selectedBus.bus_type === "ec");
+              }}>
+                <SelectTrigger className="h-12 rounded-xl">
+                  <SelectValue placeholder="Select Bus #" />
+                </SelectTrigger>
+                <SelectContent>
+                  {buses.map((bus) => (
+                    <SelectItem key={bus.id} value={bus.bus_number}>
+                      Bus #{bus.bus_number} {bus.bus_type === "ec" ? "(EC)" : ""}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            ) : (
+              <Input placeholder="Bus #" value={busNumber} onChange={(e) => setBusNumber(e.target.value)} className="h-12 rounded-xl" />
+            )}
             <Input placeholder="Route #(s)" value={routeNumbers} onChange={(e) => setRouteNumbers(e.target.value)} className="h-12 rounded-xl" />
           </div>
           <div className="flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-xl p-4">
