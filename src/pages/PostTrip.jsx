@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,6 +16,8 @@ import FuelGauge from "@/components/inspection/FuelGauge";
 
 export default function PostTrip() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const preTripId = location.state?.preTripId;
   const [submitting, setSubmitting] = useState(false);
   const [driverName, setDriverName] = useState("");
   const [busNumber, setBusNumber] = useState("");
@@ -35,13 +37,22 @@ export default function PostTrip() {
     queryFn: () => base44.entities.Bus.filter({ is_active: true }, "bus_number")
   });
 
+  const { data: preTrip } = useQuery({
+    queryKey: ["pretrip", preTripId],
+    queryFn: async () => {
+      if (!preTripId) return null;
+      const inspections = await base44.entities.Inspection.filter({ id: preTripId });
+      return inspections[0];
+    },
+    enabled: !!preTripId
+  });
+
   useEffect(() => {
     async function loadUser() {
       const user = await base44.auth.me();
       if (user?.full_name) {
         setDriverName(user.full_name);
       } else if (user?.email) {
-        // Extract name from email format: firstname.lastname@nhcs.net
         const emailName = user.email.split('@')[0];
         const nameParts = emailName.split('.');
         const formattedName = nameParts
@@ -53,6 +64,15 @@ export default function PostTrip() {
     loadUser();
   }, []);
 
+  useEffect(() => {
+    if (preTrip) {
+      setDriverName(preTrip.driver_name);
+      setBusNumber(preTrip.bus_number);
+      setRouteNumbers(preTrip.route_numbers || "");
+      setIsECBus(preTrip.bus_type === "ec");
+    }
+  }, [preTrip]);
+
   const handleSubmit = async () => {
     if (!driverName.trim() || !busNumber.trim()) {
       toast.error("Please enter driver name and bus number");
@@ -63,25 +83,62 @@ export default function PostTrip() {
       return;
     }
     setSubmitting(true);
-    await base44.entities.Inspection.create({
-      driver_name: driverName,
-      bus_number: busNumber,
-      route_numbers: routeNumbers,
-      bus_type: "school",
-      inspection_type: "post_trip",
-      is_satisfactory: isSatisfactory,
-      defects: [],
-      air_brake_checks: [],
-      post_trip_concerns: postConcerns,
-      post_trip_remarks: postRemarks,
-      end_fuel_level: endFuel,
-      end_def_level: endDef,
-      odometer_end: odometerEnd,
-      no_students_left: noStudentsLeft,
-      num_transported: numTransported ? parseInt(numTransported) : undefined,
-      status: isSatisfactory ? "resolved" : "pending",
-    });
-    toast.success("Post-Trip inspection submitted successfully!");
+    
+    if (preTripId && preTrip) {
+      // Create combined inspection
+      await base44.entities.Inspection.create({
+        driver_name: driverName,
+        bus_number: busNumber,
+        route_numbers: routeNumbers,
+        bus_type: preTrip.bus_type,
+        inspection_type: "combined",
+        is_satisfactory: preTrip.is_satisfactory && isSatisfactory,
+        defects: preTrip.defects || [],
+        air_brake_checks: preTrip.air_brake_checks || [],
+        concerns: preTrip.concerns,
+        start_fuel_level: preTrip.start_fuel_level,
+        start_def_level: preTrip.start_def_level,
+        odometer_start: preTrip.odometer_start,
+        post_trip_concerns: postConcerns,
+        post_trip_remarks: postRemarks,
+        end_fuel_level: endFuel,
+        end_def_level: endDef,
+        odometer_end: odometerEnd,
+        no_students_left: noStudentsLeft,
+        num_transported: numTransported ? parseInt(numTransported) : undefined,
+        status: "completed",
+        is_locked: true,
+        pre_trip_id: preTripId,
+      });
+      
+      // Delete the original pre-trip record
+      await base44.entities.Inspection.delete(preTripId);
+      
+      toast.success("Daily inspection completed and locked!");
+    } else {
+      // Standalone post-trip
+      await base44.entities.Inspection.create({
+        driver_name: driverName,
+        bus_number: busNumber,
+        route_numbers: routeNumbers,
+        bus_type: "school",
+        inspection_type: "post_trip",
+        is_satisfactory: isSatisfactory,
+        defects: [],
+        air_brake_checks: [],
+        post_trip_concerns: postConcerns,
+        post_trip_remarks: postRemarks,
+        end_fuel_level: endFuel,
+        end_def_level: endDef,
+        odometer_end: odometerEnd,
+        no_students_left: noStudentsLeft,
+        num_transported: numTransported ? parseInt(numTransported) : undefined,
+        status: "completed",
+        is_locked: false,
+      });
+      toast.success("Post-Trip inspection submitted successfully!");
+    }
+    
     setSubmitting(false);
     navigate("/DriverHome");
   };
