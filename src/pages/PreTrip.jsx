@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -28,6 +29,11 @@ export default function PreTrip() {
   const [defects, setDefects] = useState([]);
   const [airBrakeChecks, setAirBrakeChecks] = useState([]);
   const [concerns, setConcerns] = useState("");
+
+  const { data: buses = [] } = useQuery({
+    queryKey: ["buses"],
+    queryFn: () => base44.entities.Bus.filter({ is_active: true }, "bus_number")
+  });
 
   useEffect(() => {
     async function loadUser() {
@@ -114,12 +120,31 @@ export default function PreTrip() {
             className="h-12 rounded-xl"
           />
           <div className="grid grid-cols-2 gap-3">
-            <Input
-              placeholder="Bus #"
-              value={busNumber}
-              onChange={(e) => setBusNumber(e.target.value)}
-              className="h-12 rounded-xl"
-            />
+            {buses.length > 0 ? (
+              <Select value={busNumber} onValueChange={(value) => {
+                setBusNumber(value);
+                const selectedBus = buses.find(b => b.bus_number === value);
+                if (selectedBus) setIsECBus(selectedBus.bus_type === "ec");
+              }}>
+                <SelectTrigger className="h-12 rounded-xl">
+                  <SelectValue placeholder="Select Bus #" />
+                </SelectTrigger>
+                <SelectContent>
+                  {buses.map((bus) => (
+                    <SelectItem key={bus.id} value={bus.bus_number}>
+                      Bus #{bus.bus_number} {bus.bus_type === "ec" ? "(EC)" : ""}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            ) : (
+              <Input
+                placeholder="Bus #"
+                value={busNumber}
+                onChange={(e) => setBusNumber(e.target.value)}
+                className="h-12 rounded-xl"
+              />
+            )}
             <Input
               placeholder="Route #(s)"
               value={routeNumbers}
