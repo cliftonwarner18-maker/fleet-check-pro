@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Plus, Bus, Edit, Trash2, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -18,7 +19,8 @@ export default function FleetManagement() {
   const [editingBus, setEditingBus] = useState(null);
   const [formData, setFormData] = useState({
     bus_number: "",
-    bus_type: "regular",
+    bus_type: "school",
+    is_ec_bus: false,
     is_active: true,
     notes: ""
   });
@@ -57,7 +59,7 @@ export default function FleetManagement() {
   });
 
   const resetForm = () => {
-    setFormData({ bus_number: "", bus_type: "regular", is_active: true, notes: "" });
+    setFormData({ bus_number: "", bus_type: "school", is_ec_bus: false, is_active: true, notes: "" });
     setEditingBus(null);
   };
 
@@ -79,7 +81,8 @@ export default function FleetManagement() {
     setEditingBus(bus);
     setFormData({
       bus_number: bus.bus_number,
-      bus_type: bus.bus_type || "regular",
+      bus_type: bus.bus_type || "school",
+      is_ec_bus: bus.is_ec_bus ?? false,
       is_active: bus.is_active ?? true,
       notes: bus.notes || ""
     });
@@ -151,11 +154,19 @@ export default function FleetManagement() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="regular">Regular</SelectItem>
-                        <SelectItem value="ec">EC (Wheelchair)</SelectItem>
+                        <SelectItem value="school">School</SelectItem>
                         <SelectItem value="activity">Activity</SelectItem>
                       </SelectContent>
                     </Select>
+                  </div>
+                  <div className="flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <Checkbox
+                      checked={formData.is_ec_bus}
+                      onCheckedChange={(checked) => setFormData({ ...formData, is_ec_bus: checked })}
+                    />
+                    <label className="text-sm font-medium text-slate-700">
+                      EC Bus (Wheelchair/Handicapped Equipped)
+                    </label>
                   </div>
                   <div>
                     <label className="text-sm font-semibold text-slate-700 mb-2 block">
@@ -215,8 +226,11 @@ export default function FleetManagement() {
                       <h3 className="text-xl font-bold text-slate-800">Bus #{bus.bus_number}</h3>
                       <div className="flex gap-2 mt-2">
                         <Badge variant="outline" className="text-xs">
-                          {bus.bus_type === "ec" ? "EC (Wheelchair)" : bus.bus_type === "activity" ? "Activity" : "Regular"}
+                          {bus.bus_type === "activity" ? "Activity" : "School"}
                         </Badge>
+                        {bus.is_ec_bus && (
+                          <Badge className="bg-blue-100 text-blue-800 text-xs">EC</Badge>
+                        )}
                         <Badge className={bus.is_active ? "bg-emerald-100 text-emerald-800" : "bg-slate-100 text-slate-600"}>
                           {bus.is_active ? "Active" : "Inactive"}
                         </Badge>

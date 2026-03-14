@@ -67,7 +67,7 @@ export default function PostTrip() {
       driver_name: driverName,
       bus_number: busNumber,
       route_numbers: routeNumbers,
-      bus_type: isECBus ? "ec" : "regular",
+      bus_type: "school",
       inspection_type: "post_trip",
       is_satisfactory: isSatisfactory,
       defects: [],
@@ -102,7 +102,7 @@ export default function PostTrip() {
               <Select value={busNumber} onValueChange={(value) => {
                 setBusNumber(value);
                 const selectedBus = buses.find(b => b.bus_number === value);
-                if (selectedBus) setIsECBus(selectedBus.bus_type === "ec");
+                if (selectedBus) setIsECBus(selectedBus.is_ec_bus || false);
               }}>
                 <SelectTrigger className="h-12 rounded-xl">
                   <SelectValue placeholder="Select Bus #" />
@@ -110,7 +110,7 @@ export default function PostTrip() {
                 <SelectContent>
                   {buses.map((bus) => (
                     <SelectItem key={bus.id} value={bus.bus_number}>
-                      Bus #{bus.bus_number} {bus.bus_type === "ec" ? "(EC)" : ""}
+                      Bus #{bus.bus_number} {bus.is_ec_bus ? "(EC)" : ""}
                     </SelectItem>
                   ))}
                 </SelectContent>
