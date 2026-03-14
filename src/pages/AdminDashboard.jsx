@@ -11,8 +11,19 @@ import { Bus, AlertTriangle, CheckCircle, Clock, Search, Shield, ArrowLeft } fro
 import { toast } from "sonner";
 import InspectionCard from "@/components/admin/InspectionCard";
 import InspectionDetailModal from "@/components/admin/InspectionDetailModal";
+import EditInspectionDialog from "@/components/admin/EditInspectionDialog";
 import TD28DExport from "@/components/admin/TD28DExport";
 import { format } from "date-fns";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -20,6 +31,8 @@ export default function AdminDashboard() {
   const [typeFilter, setTypeFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedInspection, setSelectedInspection] = useState(null);
+  const [editingInspection, setEditingInspection] = useState(null);
+  const [deleteId, setDeleteId] = useState(null);
   const queryClient = useQueryClient();
 
   const { data: inspections = [], isLoading } = useQuery({
@@ -35,8 +48,21 @@ export default function AdminDashboard() {
     },
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: (id) => base44.entities.Inspection.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["inspections"] });
+      toast.success("Inspection deleted");
+      setDeleteId(null);
+    },
+  });
+
   const handleUpdateStatus = (id, newStatus) => {
     updateMutation.mutate({ id, data: { status: newStatus } });
+  };
+
+  const handleDelete = () => {
+    if (deleteId) deleteMutation.mutate(deleteId);
   };
 
   const filtered = inspections.filter((insp) => {
@@ -178,7 +204,9 @@ export default function AdminDashboard() {
                 key={insp.id}
                 inspection={insp}
                 onView={setSelectedInspection}
+                onEdit={setEditingInspection}
                 onUpdateStatus={handleUpdateStatus}
+                onDelete={setDeleteId}
               />
             ))}
           </div>
@@ -190,6 +218,29 @@ export default function AdminDashboard() {
         open={!!selectedInspection}
         onClose={() => setSelectedInspection(null)}
       />
+
+      <EditInspectionDialog
+        inspection={editingInspection}
+        open={!!editingInspection}
+        onClose={() => setEditingInspection(null)}
+      />
+
+      <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Inspection?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. The inspection record will be permanently deleted.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete} className="bg-red-600 hover:bg-red-700">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

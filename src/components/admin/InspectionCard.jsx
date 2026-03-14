@@ -2,7 +2,7 @@ import React from "react";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, Clock, Eye, Wrench } from "lucide-react";
+import { CheckCircle, Clock, Eye, Wrench, Edit, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import DefectBadge from "./DefectBadge";
 
@@ -12,7 +12,7 @@ const STATUS_CONFIG = {
   resolved: { label: "Resolved", color: "bg-emerald-100 text-emerald-800", icon: CheckCircle },
 };
 
-export default function InspectionCard({ inspection, onView, onUpdateStatus }) {
+export default function InspectionCard({ inspection, onView, onUpdateStatus, onEdit, onDelete }) {
   const statusCfg = STATUS_CONFIG[inspection.status] || STATUS_CONFIG.pending;
   const StatusIcon = statusCfg.icon;
   const allDefects = [...(inspection.defects || []), ...(inspection.air_brake_checks || [])];
@@ -61,9 +61,12 @@ export default function InspectionCard({ inspection, onView, onUpdateStatus }) {
         </>
       )}
 
-      <div className="flex items-center gap-2 mt-3 pt-3 border-t border-slate-100">
+      <div className="flex flex-wrap items-center gap-2 mt-3 pt-3 border-t border-slate-100">
         <Button variant="outline" size="sm" onClick={() => onView(inspection)} className="rounded-lg text-xs">
-          <Eye className="w-3.5 h-3.5 mr-1" /> View Details
+          <Eye className="w-3.5 h-3.5 mr-1" /> View
+        </Button>
+        <Button variant="outline" size="sm" onClick={() => onEdit(inspection)} className="rounded-lg text-xs">
+          <Edit className="w-3.5 h-3.5 mr-1" /> Edit
         </Button>
         {inspection.status === "pending" && (
           <Button
@@ -71,7 +74,7 @@ export default function InspectionCard({ inspection, onView, onUpdateStatus }) {
             onClick={() => onUpdateStatus(inspection.id, "reviewed")}
             className="rounded-lg text-xs bg-blue-600 hover:bg-blue-700"
           >
-            <Wrench className="w-3.5 h-3.5 mr-1" /> Mark Reviewed
+            <Wrench className="w-3.5 h-3.5 mr-1" /> Reviewed
           </Button>
         )}
         {inspection.status === "reviewed" && (
@@ -80,9 +83,17 @@ export default function InspectionCard({ inspection, onView, onUpdateStatus }) {
             onClick={() => onUpdateStatus(inspection.id, "resolved")}
             className="rounded-lg text-xs bg-emerald-600 hover:bg-emerald-700"
           >
-            <CheckCircle className="w-3.5 h-3.5 mr-1" /> Mark Resolved
+            <CheckCircle className="w-3.5 h-3.5 mr-1" /> Resolved
           </Button>
         )}
+        <Button 
+          variant="destructive" 
+          size="sm" 
+          onClick={() => onDelete(inspection.id)}
+          className="rounded-lg text-xs ml-auto"
+        >
+          <Trash2 className="w-3.5 h-3.5 mr-1" /> Delete
+        </Button>
       </div>
     </div>
   );
