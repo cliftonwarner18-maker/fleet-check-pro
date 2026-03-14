@@ -5,9 +5,11 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle, Clock, Eye, Wrench, Edit, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import DefectBadge from "./DefectBadge";
+import CombinedInspectionPDF from "./CombinedInspectionPDF";
 
 const STATUS_CONFIG = {
-  pending: { label: "Pending", color: "bg-amber-100 text-amber-800", icon: Clock },
+  pending_post_trip: { label: "Pending Post-Trip", color: "bg-amber-100 text-amber-800", icon: Clock },
+  completed: { label: "Completed", color: "bg-emerald-100 text-emerald-800", icon: CheckCircle },
   reviewed: { label: "Reviewed", color: "bg-blue-100 text-blue-800", icon: Eye },
   resolved: { label: "Resolved", color: "bg-emerald-100 text-emerald-800", icon: CheckCircle },
 };
@@ -33,8 +35,11 @@ export default function InspectionCard({ inspection, onView, onUpdateStatus, onE
           </p>
         </div>
         <Badge variant="outline" className="text-xs">
-          {inspection.inspection_type === "pre_trip" ? "Pre-Trip" : "Post-Trip"}
+          {inspection.inspection_type === "pre_trip" ? "Pre-Trip" : inspection.inspection_type === "post_trip" ? "Post-Trip" : "Combined Daily"}
         </Badge>
+        {inspection.is_locked && (
+          <Badge className="text-xs bg-slate-700 text-white ml-1">Locked</Badge>
+        )}
       </div>
 
       {inspection.is_satisfactory ? (
@@ -65,26 +70,33 @@ export default function InspectionCard({ inspection, onView, onUpdateStatus, onE
         <Button variant="outline" size="sm" onClick={() => onView(inspection)} className="rounded-lg text-xs">
           <Eye className="w-3.5 h-3.5 mr-1" /> View
         </Button>
-        <Button variant="outline" size="sm" onClick={() => onEdit(inspection)} className="rounded-lg text-xs">
-          <Edit className="w-3.5 h-3.5 mr-1" /> Edit
-        </Button>
-        {inspection.status === "pending" && (
-          <Button
-            size="sm"
-            onClick={() => onUpdateStatus(inspection.id, "reviewed")}
-            className="rounded-lg text-xs bg-blue-600 hover:bg-blue-700"
-          >
-            <Wrench className="w-3.5 h-3.5 mr-1" /> Reviewed
+        {!inspection.is_locked && (
+          <Button variant="outline" size="sm" onClick={() => onEdit(inspection)} className="rounded-lg text-xs">
+            <Edit className="w-3.5 h-3.5 mr-1" /> Edit
           </Button>
         )}
-        {inspection.status === "reviewed" && (
-          <Button
-            size="sm"
-            onClick={() => onUpdateStatus(inspection.id, "resolved")}
-            className="rounded-lg text-xs bg-emerald-600 hover:bg-emerald-700"
-          >
-            <CheckCircle className="w-3.5 h-3.5 mr-1" /> Resolved
-          </Button>
+        {inspection.inspection_type === "combined" && <CombinedInspectionPDF inspection={inspection} />}
+        {!inspection.is_locked && (
+          <>
+            {inspection.status === "pending_post_trip" && (
+              <Button
+                size="sm"
+                onClick={() => onUpdateStatus(inspection.id, "reviewed")}
+                className="rounded-lg text-xs bg-blue-600 hover:bg-blue-700"
+              >
+                <Wrench className="w-3.5 h-3.5 mr-1" /> Reviewed
+              </Button>
+            )}
+            {inspection.status === "reviewed" && (
+              <Button
+                size="sm"
+                onClick={() => onUpdateStatus(inspection.id, "resolved")}
+                className="rounded-lg text-xs bg-emerald-600 hover:bg-emerald-700"
+              >
+                <CheckCircle className="w-3.5 h-3.5 mr-1" /> Resolved
+              </Button>
+            )}
+          </>
         )}
         <Button 
           variant="destructive" 
