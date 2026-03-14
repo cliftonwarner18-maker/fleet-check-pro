@@ -92,7 +92,8 @@ export default function PreTrip() {
       start_fuel_level: startFuel,
       start_def_level: startDef,
       odometer_start: odometerStart,
-      status: isSatisfactory ? "resolved" : "pending",
+      status: "pending_post_trip",
+      is_locked: false,
     });
     toast.success("Pre-Trip inspection submitted successfully!");
     setSubmitting(false);
