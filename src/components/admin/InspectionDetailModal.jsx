@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
@@ -10,7 +10,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import DefectBadge from "./DefectBadge";
 
 export default function InspectionDetailModal({ inspection, open, onClose }) {
-  const [adminNotes, setAdminNotes] = React.useState(inspection?.admin_notes || "");
+  const [adminNotes, setAdminNotes] = useState(inspection?.admin_notes || "");
   const queryClient = useQueryClient();
 
   if (!inspection) return null;
