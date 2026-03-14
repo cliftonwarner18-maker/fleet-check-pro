@@ -20,7 +20,7 @@ export default function PreTrip() {
   const [driverName, setDriverName] = useState("");
   const [busNumber, setBusNumber] = useState("");
   const [routeNumbers, setRouteNumbers] = useState("");
-  const [busType, setBusType] = useState("regular");
+  const [isECBus, setIsECBus] = useState(false);
   const [odometerStart, setOdometerStart] = useState("");
   const [startFuel, setStartFuel] = useState("");
   const [startDef, setStartDef] = useState("");
@@ -71,7 +71,7 @@ export default function PreTrip() {
       driver_name: driverName,
       bus_number: busNumber,
       route_numbers: routeNumbers,
-      bus_type: busType,
+      bus_type: isECBus ? "ec" : "regular",
       inspection_type: "pre_trip",
       is_satisfactory: isSatisfactory,
       defects: defects,
@@ -117,25 +117,22 @@ export default function PreTrip() {
               className="h-12 rounded-xl"
             />
           </div>
-          <div className="grid grid-cols-2 gap-3">
-            <Select value={busType} onValueChange={setBusType}>
-              <SelectTrigger className="h-12 rounded-xl">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="regular">Regular</SelectItem>
-                <SelectItem value="ec">EC Bus</SelectItem>
-                <SelectItem value="activity">Activity Bus</SelectItem>
-              </SelectContent>
-            </Select>
-            <Input
-              placeholder="Odometer Start"
-              value={odometerStart}
-              onChange={(e) => setOdometerStart(e.target.value)}
-              className="h-12 rounded-xl"
-              type="number"
+          <div className="flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-xl p-4">
+            <Checkbox
+              checked={isECBus}
+              onCheckedChange={setIsECBus}
             />
+            <label className="text-sm font-medium text-slate-700">
+              EC Bus (Wheelchair/Handicapped Equipped)
+            </label>
           </div>
+          <Input
+            placeholder="Odometer Start"
+            value={odometerStart}
+            onChange={(e) => setOdometerStart(e.target.value)}
+            className="h-12 rounded-xl"
+            type="number"
+          />
         </div>
 
         {/* Fuel & DEF Levels */}
@@ -178,6 +175,7 @@ export default function PreTrip() {
               onToggle={toggleDefect}
               airBrakeChecks={airBrakeChecks}
               onToggleAirBrake={toggleAirBrake}
+              showECItems={isECBus}
             />
           </div>
         )}

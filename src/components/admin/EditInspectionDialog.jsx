@@ -22,7 +22,7 @@ export default function EditInspectionDialog({ inspection, open, onClose }) {
     driver_name: inspection?.driver_name || "",
     bus_number: inspection?.bus_number || "",
     route_numbers: inspection?.route_numbers || "",
-    bus_type: inspection?.bus_type || "regular",
+    is_ec_bus: inspection?.bus_type === "ec",
     is_satisfactory: inspection?.is_satisfactory || false,
     defects: inspection?.defects || [],
     air_brake_checks: inspection?.air_brake_checks || [],
@@ -73,9 +73,11 @@ export default function EditInspectionDialog({ inspection, open, onClose }) {
     const editLog = `\n[EDITED ${new Date().toLocaleString()}]: ${editReason}`;
     const dataToSave = {
       ...formData,
+      bus_type: formData.is_ec_bus ? "ec" : "regular",
       num_transported: formData.num_transported ? parseInt(formData.num_transported) : undefined,
       admin_notes: (formData.admin_notes || "") + editLog
     };
+    delete dataToSave.is_ec_bus;
     await base44.entities.Inspection.update(inspection.id, dataToSave);
     toast.success("Inspection updated successfully");
     queryClient.invalidateQueries({ queryKey: ["inspections"] });
@@ -128,18 +130,12 @@ export default function EditInspectionDialog({ inspection, open, onClose }) {
                 onChange={(e) => setFormData({ ...formData, route_numbers: e.target.value })}
               />
             </div>
-            <div>
-              <Label>Bus Type</Label>
-              <Select value={formData.bus_type} onValueChange={(v) => setFormData({ ...formData, bus_type: v })}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="regular">Regular</SelectItem>
-                  <SelectItem value="ec">EC Bus</SelectItem>
-                  <SelectItem value="activity">Activity Bus</SelectItem>
-                </SelectContent>
-              </Select>
+            <div className="flex items-center gap-2 pt-2">
+              <Checkbox
+                checked={formData.is_ec_bus}
+                onCheckedChange={(checked) => setFormData({ ...formData, is_ec_bus: checked })}
+              />
+              <Label>EC Bus (Wheelchair/Handicapped Equipped)</Label>
             </div>
           </div>
 
@@ -197,6 +193,7 @@ export default function EditInspectionDialog({ inspection, open, onClose }) {
                 onToggle={toggleDefect}
                 airBrakeChecks={formData.air_brake_checks}
                 onToggleAirBrake={toggleAirBrake}
+                showECItems={formData.is_ec_bus}
               />
             </div>
           )}

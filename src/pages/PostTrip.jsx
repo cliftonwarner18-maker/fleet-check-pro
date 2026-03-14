@@ -18,7 +18,7 @@ export default function PostTrip() {
   const [driverName, setDriverName] = useState("");
   const [busNumber, setBusNumber] = useState("");
   const [routeNumbers, setRouteNumbers] = useState("");
-  const [busType, setBusType] = useState("regular");
+  const [isECBus, setIsECBus] = useState(false);
   const [odometerEnd, setOdometerEnd] = useState("");
   const [endFuel, setEndFuel] = useState("");
   const [endDef, setEndDef] = useState("");
@@ -50,7 +50,7 @@ export default function PostTrip() {
       driver_name: driverName,
       bus_number: busNumber,
       route_numbers: routeNumbers,
-      bus_type: busType,
+      bus_type: isECBus ? "ec" : "regular",
       inspection_type: "post_trip",
       is_satisfactory: isSatisfactory,
       defects: [],
@@ -84,18 +84,19 @@ export default function PostTrip() {
             <Input placeholder="Bus #" value={busNumber} onChange={(e) => setBusNumber(e.target.value)} className="h-12 rounded-xl" />
             <Input placeholder="Route #(s)" value={routeNumbers} onChange={(e) => setRouteNumbers(e.target.value)} className="h-12 rounded-xl" />
           </div>
-          <div className="grid grid-cols-2 gap-3">
-            <Select value={busType} onValueChange={setBusType}>
-              <SelectTrigger className="h-12 rounded-xl"><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="regular">Regular</SelectItem>
-                <SelectItem value="ec">EC Bus</SelectItem>
-                <SelectItem value="activity">Activity Bus</SelectItem>
-              </SelectContent>
-            </Select>
-            <Input placeholder="# Transported" value={numTransported} onChange={(e) => setNumTransported(e.target.value)} className="h-12 rounded-xl" type="number" />
+          <div className="flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-xl p-4">
+            <Checkbox
+              checked={isECBus}
+              onCheckedChange={setIsECBus}
+            />
+            <label className="text-sm font-medium text-slate-700">
+              EC Bus (Wheelchair/Handicapped Equipped)
+            </label>
           </div>
-          <Input placeholder="Odometer End" value={odometerEnd} onChange={(e) => setOdometerEnd(e.target.value)} className="h-12 rounded-xl" type="number" />
+          <div className="grid grid-cols-2 gap-3">
+            <Input placeholder="# Transported" value={numTransported} onChange={(e) => setNumTransported(e.target.value)} className="h-12 rounded-xl" type="number" />
+            <Input placeholder="Odometer End" value={odometerEnd} onChange={(e) => setOdometerEnd(e.target.value)} className="h-12 rounded-xl" type="number" />
+          </div>
         </div>
 
         {/* Fuel & DEF Levels */}
