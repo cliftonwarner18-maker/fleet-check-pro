@@ -21,12 +21,12 @@ export default function BusHistoryExport({ busNumber, inspections }) {
             body {
               font-family: 'Courier New', monospace;
               padding: 40px;
-              background: #000;
-              color: #0f0;
+              background: #fff;
+              color: #000;
               font-size: 12px;
             }
             .header {
-              border: 2px solid #0f0;
+              border: 2px solid #000;
               padding: 20px;
               margin-bottom: 30px;
               text-align: center;
@@ -41,13 +41,12 @@ export default function BusHistoryExport({ busNumber, inspections }) {
               opacity: 0.8;
             }
             .record {
-              border: 1px solid #0f0;
+              border: 1px solid #000;
               padding: 15px;
               margin-bottom: 20px;
-              background: rgba(0, 255, 0, 0.05);
             }
             .record-header {
-              border-bottom: 1px solid #0f0;
+              border-bottom: 1px solid #000;
               padding-bottom: 10px;
               margin-bottom: 10px;
               display: flex;
@@ -74,7 +73,7 @@ export default function BusHistoryExport({ busNumber, inspections }) {
               opacity: 0.5;
             }
             @media print {
-              body { background: #000; }
+              body { background: #fff; }
             }
           </style>
         </head>
@@ -87,7 +86,9 @@ export default function BusHistoryExport({ busNumber, inspections }) {
     printWindow.print();
   };
 
-  const busInspections = inspections.filter(i => i.bus_number === busNumber);
+  const busInspections = inspections.filter(i => 
+    i.bus_number === busNumber && !i.is_satisfactory
+  );
 
   return (
     <>
@@ -111,7 +112,7 @@ export default function BusHistoryExport({ busNumber, inspections }) {
         {busInspections.length === 0 ? (
           <div className="no-data">
             ┌────────────────────────────────────┐<br/>
-            │  NO INSPECTION RECORDS FOUND       │<br/>
+            │  NO DEFECTS REPORTED               │<br/>
             └────────────────────────────────────┘
           </div>
         ) : (
