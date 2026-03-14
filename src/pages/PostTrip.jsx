@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -18,6 +18,9 @@ export default function PostTrip() {
   const navigate = useNavigate();
   const location = useLocation();
   const preTripId = location.state?.preTripId;
+  const postTripId = new URLSearchParams(location.search).get('id');
+  const isEditing = !!postTripId;
+  const queryClient = useQueryClient();
   const [submitting, setSubmitting] = useState(false);
   const [driverName, setDriverName] = useState("");
   const [busNumber, setBusNumber] = useState("");
@@ -47,6 +50,16 @@ export default function PostTrip() {
     enabled: !!preTripId
   });
 
+  const { data: existingPostTrip } = useQuery({
+    queryKey: ["posttrip", postTripId],
+    queryFn: async () => {
+      if (!postTripId) return null;
+      const inspections = await base44.entities.Inspection.filter({ id: postTripId });
+      return inspections[0];
+    },
+    enabled: isEditing
+  });
+
   useEffect(() => {
     async function loadUser() {
       const user = await base44.auth.me();
@@ -63,6 +76,23 @@ export default function PostTrip() {
     }
     loadUser();
   }, []);
+
+  useEffect(() => {
+    if (existingPostTrip) {
+      setDriverName(existingPostTrip.driver_name);
+      setBusNumber(existingPostTrip.bus_number);
+      setRouteNumbers(existingPostTrip.route_numbers || "");
+      setIsECBus(existingPostTrip.bus_type === "ec");
+      setOdometerEnd(existingPostTrip.odometer_end || "");
+      setEndFuel(existingPostTrip.end_fuel_level || "");
+      setEndDef(existingPostTrip.end_def_level || "");
+      setIsSatisfactory(existingPostTrip.is_satisfactory || false);
+      setNoStudentsLeft(existingPostTrip.no_students_left || false);
+      setPostConcerns(existingPostTrip.post_trip_concerns || "");
+      setPostRemarks(existingPostTrip.post_trip_remarks || "");
+      setNumTransported(existingPostTrip.num_transported ? existingPostTrip.num_transported.toString() : "");
+    }
+  }, [existingPostTrip]);
 
   useEffect(() => {
     if (preTrip) {
@@ -84,7 +114,26 @@ export default function PostTrip() {
     }
     setSubmitting(true);
     
-    if (preTripId && preTrip) {
+    if (isEditing && existingPostTrip) {
+      // Update existing post-trip or combined inspection
+      const updateData = {
+        driver_name: driverName,
+        bus_number: busNumber,
+        route_numbers: routeNumbers,
+        bus_type: isECBus ? "ec" : "school",
+        is_satisfactory: isSatisfactory,
+        post_trip_concerns: postConcerns,
+        post_trip_remarks: postRemarks,
+        end_fuel_level: endFuel,
+        end_def_level: endDef,
+        odometer_end: odometerEnd,
+        no_students_left: noStudentsLeft,
+        num_transported: numTransported ? parseInt(numTransported) : undefined,
+      };
+      await base44.entities.Inspection.update(postTripId, updateData);
+      queryClient.invalidateQueries({ queryKey: ["inspections"] });
+      toast.success("Post-Trip inspection updated successfully!");
+    } else if (preTripId && preTrip) {
       // Create combined inspection
       await base44.entities.Inspection.create({
         driver_name: driverName,
@@ -121,7 +170,7 @@ export default function PostTrip() {
         driver_name: driverName,
         bus_number: busNumber,
         route_numbers: routeNumbers,
-        bus_type: "school",
+        bus_type: isECBus ? "ec" : "school",
         inspection_type: "post_trip",
         is_satisfactory: isSatisfactory,
         defects: [],
@@ -287,7 +336,7 @@ export default function PostTrip() {
             ) : (
               <Send className="w-5 h-5 mr-2" />
             )}
-            Submit
+            {isEditing ? "Update" : "Submit"}
           </Button>
         </div>
 
