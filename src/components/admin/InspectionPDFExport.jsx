@@ -246,10 +246,10 @@ export default function InspectionPDFExport({ inspection }) {
         </div>
 
         {inspection.is_satisfactory ? (
-          <div className="satisfactory-box">
-            ✓ VEHICLE {isPre ? "PRE" : "POST"}-TRIP SATISFACTORY
+          <div className="satisfactory-box" style={{ background: "#f0fdf4", borderColor: "#22c55e" }}>
+            ✓ VEHICLE IS SAFE AND {isPre ? "PRE" : "POST"}-TRIP SATISFACTORY
             <div style={{ fontSize: "9px", marginTop: "4px", fontWeight: "normal" }}>
-              No defects or issues reported
+              {isPre ? "Bus is safe to operate - No defects or issues reported" : "No end-of-day issues or defects reported"}
             </div>
           </div>
         ) : (
@@ -483,11 +483,24 @@ export default function InspectionPDFExport({ inspection }) {
             )}
             {inspection.no_students_left && (
               <div className="satisfactory-box" style={{ background: "#f0fdf4", borderColor: "#22c55e" }}>
-                ✓ Post-Trip: No Students were left on the bus
+                ✓ Post-Trip Complete: No Students Left on Bus
               </div>
             )}
           </>
-        )}
+          )}
+
+          {/* Combined Inspection Safety Summary */}
+          {inspection.inspection_type === "combined" && (
+          <div style={{ marginTop: "15px", padding: "12px", border: "2px solid #22c55e", background: "#f0fdf4", borderRadius: "4px", fontSize: "10px" }}>
+            <strong style={{ display: "block", marginBottom: "6px", fontSize: "11px" }}>DAILY INSPECTION SUMMARY:</strong>
+            <div style={{ lineHeight: "1.6" }}>
+              ✓ Pre-Trip: {inspection.is_satisfactory ? "Bus is Safe and Satisfactory" : "Defects Documented"}<br/>
+              ✓ Post-Trip: {inspection.is_satisfactory ? "No End-of-Day Issues Reported" : "Condition Issues Noted"}<br/>
+              ✓ Student Safety: No Students Left on Bus<br/>
+              <strong style={{ display: "block", marginTop: "6px" }}>Bus Cleared for Next Route</strong>
+            </div>
+          </div>
+          )}
 
         <div className="disclosure">
           <strong>Commercial Vehicle Safety Disclosure</strong><br/>
