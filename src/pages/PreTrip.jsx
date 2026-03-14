@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,6 +17,10 @@ import ChecklistGrid from "@/components/inspection/ChecklistGrid";
 
 export default function PreTrip() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const inspectionId = new URLSearchParams(location.search).get('id');
+  const isEditing = !!inspectionId;
+  
   const [submitting, setSubmitting] = useState(false);
   const [driverName, setDriverName] = useState("");
   const [busNumber, setBusNumber] = useState("");
@@ -35,7 +39,34 @@ export default function PreTrip() {
     queryFn: () => base44.entities.Bus.filter({ is_active: true }, "bus_number")
   });
 
+  const { data: existingInspection } = useQuery({
+    queryKey: ["inspection", inspectionId],
+    queryFn: async () => {
+      if (!inspectionId) return null;
+      const inspections = await base44.entities.Inspection.filter({ id: inspectionId });
+      return inspections[0];
+    },
+    enabled: isEditing
+  });
+
   useEffect(() => {
+    if (existingInspection) {
+      setDriverName(existingInspection.driver_name);
+      setBusNumber(existingInspection.bus_number);
+      setRouteNumbers(existingInspection.route_numbers || "");
+      setIsECBus(existingInspection.bus_type === "ec");
+      setOdometerStart(existingInspection.odometer_start || "");
+      setStartFuel(existingInspection.start_fuel_level || "");
+      setStartDef(existingInspection.start_def_level || "");
+      setIsSatisfactory(existingInspection.is_satisfactory || false);
+      setDefects(existingInspection.defects || []);
+      setAirBrakeChecks(existingInspection.air_brake_checks || []);
+      setConcerns(existingInspection.concerns || "");
+    }
+  }, [existingInspection]);
+
+  useEffect(() => {
+    if (isEditing || !driverName) return; // Skip if editing or already loaded
     async function loadUser() {
       const user = await base44.auth.me();
       if (user?.full_name) {
@@ -51,7 +82,7 @@ export default function PreTrip() {
       }
     }
     loadUser();
-  }, []);
+  }, [isEditing]);
 
   const hasDefects = defects.length > 0 || airBrakeChecks.length > 0;
 
@@ -79,11 +110,11 @@ export default function PreTrip() {
       return;
     }
     setSubmitting(true);
-    await base44.entities.Inspection.create({
+    const inspectionData = {
       driver_name: driverName,
       bus_number: busNumber,
       route_numbers: routeNumbers,
-      bus_type: "school",
+      bus_type: isECBus ? "ec" : "school",
       inspection_type: "pre_trip",
       is_satisfactory: isSatisfactory,
       defects: defects,
@@ -94,8 +125,15 @@ export default function PreTrip() {
       odometer_start: odometerStart,
       status: "pending_post_trip",
       is_locked: false,
-    });
-    toast.success("Pre-Trip inspection submitted successfully!");
+    };
+
+    if (isEditing) {
+      await base44.entities.Inspection.update(inspectionId, inspectionData);
+      toast.success("Pre-Trip inspection updated successfully!");
+    } else {
+      await base44.entities.Inspection.create(inspectionData);
+      toast.success("Pre-Trip inspection submitted successfully!");
+    }
     setSubmitting(false);
     navigate("/DriverHome");
   };
@@ -243,7 +281,7 @@ export default function PreTrip() {
             ) : (
               <Send className="w-5 h-5 mr-2" />
             )}
-            Submit
+            {isEditing ? "Update" : "Submit"}
           </Button>
         </div>
 
