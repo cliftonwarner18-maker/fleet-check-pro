@@ -15,7 +15,7 @@ const STATUS_CONFIG = {
 };
 
 export default function InspectionCard({ inspection, onView, onUpdateStatus, onEdit, onDelete }) {
-  const statusCfg = STATUS_CONFIG[inspection.status] || STATUS_CONFIG.pending;
+  const statusCfg = STATUS_CONFIG[inspection.status] || STATUS_CONFIG.pending_post_trip;
   const StatusIcon = statusCfg.icon;
   const allDefects = [...(inspection.defects || []), ...(inspection.air_brake_checks || [])];
 
