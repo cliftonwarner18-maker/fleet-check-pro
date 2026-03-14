@@ -222,7 +222,7 @@ export default function InspectionPDFExport({ inspection }) {
           </div>
           <div className="info-row">
             <strong>Bus Type:</strong>
-            <span style="text-transform: uppercase">
+            <span style={{ textTransform: "uppercase" }}>
               {inspection.bus_type === "ec" ? "EC" : inspection.bus_type === "activity" ? "ACTIVITY" : "REGULAR"}
             </span>
           </div>
@@ -248,7 +248,7 @@ export default function InspectionPDFExport({ inspection }) {
         {inspection.is_satisfactory ? (
           <div className="satisfactory-box">
             ✓ VEHICLE {isPre ? "PRE" : "POST"}-TRIP SATISFACTORY
-            <div style="font-size: 9px; margin-top: 4px; font-weight: normal;">
+            <div style={{ fontSize: "9px", marginTop: "4px", fontWeight: "normal" }}>
               No defects or issues reported
             </div>
           </div>
@@ -466,7 +466,7 @@ export default function InspectionPDFExport({ inspection }) {
               </div>
             )}
             {inspection.no_students_left && (
-              <div className="satisfactory-box" style="background: #f0fdf4; border-color: #22c55e;">
+              <div className="satisfactory-box" style={{ background: "#f0fdf4", borderColor: "#22c55e" }}>
                 ✓ Post-Trip: No Students were left on the bus
               </div>
             )}
@@ -490,7 +490,7 @@ export default function InspectionPDFExport({ inspection }) {
         </div>
 
         {inspection.admin_notes && (
-          <div className="concerns-section" style="margin-top: 10px;">
+          <div className="concerns-section" style={{ marginTop: "10px" }}>
             <strong>Admin / Mechanic Notes:</strong>
             <p>{inspection.admin_notes}</p>
           </div>
