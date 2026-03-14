@@ -1,5 +1,5 @@
 import React from "react";
-import { CHECKLIST_ITEMS, PLABS_ITEMS } from "./ChecklistData";
+import { CHECKLIST_ITEMS, PLABS_ITEMS, EC_ITEMS } from "./ChecklistData";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 
@@ -93,6 +93,51 @@ export default function ChecklistGrid({ selectedDefects, onToggle, airBrakeCheck
           })}
         </div>
       </div>
-    </div>
-  );
-}
+
+      {/* EC Bus Equipment Section */}
+      {showECItems && (
+        <div>
+          <div className="flex items-center gap-2 mb-3">
+            <div className="h-1 w-8 bg-purple-500 rounded-full" />
+            <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wide">
+              EC Bus Equipment
+            </h3>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+            {EC_ITEMS.map((item) => {
+              const isChecked = selectedDefects.includes(item.id);
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => onToggle(item.id)}
+                  className={cn(
+                    "flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-all border",
+                    isChecked
+                      ? "bg-red-50 border-red-300 shadow-sm"
+                      : "bg-white border-slate-100 hover:border-slate-200 hover:bg-slate-50"
+                  )}
+                >
+                  <Checkbox
+                    checked={isChecked}
+                    className={cn(
+                      "h-5 w-5 rounded border-2 flex-shrink-0",
+                      isChecked ? "border-red-500 bg-red-500 text-white" : "border-slate-300"
+                    )}
+                  />
+                  <span className={cn(
+                    "text-sm",
+                    isChecked ? "text-red-800 font-semibold" : "text-slate-600"
+                  )}>
+                    <span className="text-slate-400 font-mono text-xs mr-1">{item.id}.</span>
+                    {item.label}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+      </div>
+      );
+      }
