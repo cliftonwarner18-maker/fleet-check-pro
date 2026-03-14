@@ -191,19 +191,29 @@ export default function PreTrip() {
           />
         </div>
 
-        {/* Submit */}
-        <Button
-          onClick={handleSubmit}
-          disabled={submitting}
-          className="w-full h-14 rounded-2xl text-base font-bold bg-[#1B3A5C] hover:bg-[#142d47] shadow-lg"
-        >
-          {submitting ? (
-            <Loader2 className="w-5 h-5 animate-spin mr-2" />
-          ) : (
-            <Send className="w-5 h-5 mr-2" />
-          )}
-          Submit Pre-Trip Inspection
-        </Button>
+        {/* Submit & Cancel */}
+        <div className="grid grid-cols-2 gap-3">
+          <Button
+            onClick={() => navigate("/DriverHome")}
+            disabled={submitting}
+            variant="outline"
+            className="h-14 rounded-2xl text-base font-bold"
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleSubmit}
+            disabled={submitting}
+            className="h-14 rounded-2xl text-base font-bold bg-[#1B3A5C] hover:bg-[#142d47] shadow-lg"
+          >
+            {submitting ? (
+              <Loader2 className="w-5 h-5 animate-spin mr-2" />
+            ) : (
+              <Send className="w-5 h-5 mr-2" />
+            )}
+            Submit
+          </Button>
+        </div>
 
         <p className="text-center text-xs text-slate-400 pb-6">
           New Hanover County Schools • Wilmington, NC
