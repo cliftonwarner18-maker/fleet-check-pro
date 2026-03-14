@@ -74,11 +74,11 @@ export default function AdminDashboard() {
     return matchStatus && matchType && matchSearch;
   });
 
-  const pendingCount = inspections.filter(i => i.status === "pending").length;
+  const pendingCount = inspections.filter(i => i.status === "pending_post_trip").length;
   const todayCount = inspections.filter(i =>
     format(new Date(i.created_date), "yyyy-MM-dd") === format(new Date(), "yyyy-MM-dd")
   ).length;
-  const defectCount = inspections.filter(i => !i.is_satisfactory && i.status === "pending").length;
+  const defectCount = inspections.filter(i => !i.is_satisfactory && i.status === "pending_post_trip").length;
 
   const todayInspections = inspections.filter(i =>
     format(new Date(i.created_date), "yyyy-MM-dd") === format(new Date(), "yyyy-MM-dd")
@@ -177,7 +177,8 @@ export default function AdminDashboard() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="pending_post_trip">Pending Post-Trip</SelectItem>
+                <SelectItem value="completed">Completed</SelectItem>
                 <SelectItem value="reviewed">Reviewed</SelectItem>
                 <SelectItem value="resolved">Resolved</SelectItem>
               </SelectContent>
@@ -190,6 +191,7 @@ export default function AdminDashboard() {
                 <SelectItem value="all">All Types</SelectItem>
                 <SelectItem value="pre_trip">Pre-Trip</SelectItem>
                 <SelectItem value="post_trip">Post-Trip</SelectItem>
+                <SelectItem value="combined">Combined Daily</SelectItem>
               </SelectContent>
             </Select>
           </div>
