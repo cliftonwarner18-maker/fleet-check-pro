@@ -191,11 +191,11 @@ export default function PreTrip() {
           )}>
             <CheckCircle2 className={cn("w-7 h-7", isSatisfactory ? "text-white" : "text-slate-400")} />
           </div>
-          <div className="text-left">
+          <div className="text-left flex-1">
             <p className={cn("font-bold", isSatisfactory ? "text-emerald-800" : "text-slate-700")}>
-              Vehicle Pre-Trip Satisfactory
+              Bus is Safe and Satisfactory
             </p>
-            <p className="text-xs text-slate-500 mt-0.5">No defects found — bus is ready to operate</p>
+            <p className="text-xs text-slate-500 mt-0.5">{isSatisfactory ? "✓ No defects — ready to operate" : "No defects found — bus is ready to operate"}</p>
           </div>
         </button>
 
