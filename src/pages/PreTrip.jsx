@@ -78,10 +78,6 @@ export default function PreTrip() {
       toast.error("Please enter driver name and bus number");
       return;
     }
-    if (!isSatisfactory && !hasDefects) {
-      toast.error("Please mark the bus as satisfactory or check defects found");
-      return;
-    }
     setSubmitting(true);
     await base44.entities.Inspection.create({
       driver_name: driverName,
