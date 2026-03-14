@@ -2,7 +2,7 @@ import React, { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { FileText } from "lucide-react";
 import { format } from "date-fns";
-import { DEFECT_LABEL_MAP } from "@/components/inspection/ChecklistData";
+import { DEFECT_LABEL_MAP, EC_ITEMS } from "@/components/inspection/ChecklistData";
 
 export default function InspectionPDFExport({ inspection }) {
   const printRef = useRef();
@@ -408,13 +408,29 @@ export default function InspectionPDFExport({ inspection }) {
                   <span>36. Wheelchair Strap System-EC</span>
                 </div>
                 <div className="checklist-item">
-                  <span className={inspection.defects?.includes("37") ? "checkbox checked" : "checkbox"}></span>
-                  <span>37. Wheelchair Lift-EC</span>
+                   <span className={inspection.defects?.includes("37") ? "checkbox checked" : "checkbox"}></span>
+                   <span>37. Wheelchair Lift-EC</span>
+                 </div>
                 </div>
-              </div>
-            </div>
+                </div>
 
-            {isPre && (
+                {inspection.bus_type === "ec" && (
+                <div className="checklist">
+                 <div className="checklist-header">
+                   * ADDITIONAL EC BUS EQUIPMENT *
+                 </div>
+                 <div className="checklist-grid">
+                   {EC_ITEMS.map((item) => (
+                     <div key={item.id} className="checklist-item">
+                       <span className={inspection.defects?.includes(item.id) ? "checkbox checked" : "checkbox"}></span>
+                       <span>{item.id}. {item.label}</span>
+                     </div>
+                   ))}
+                 </div>
+                </div>
+                )}
+
+                {isPre && (
               <div className="plabs-section">
                 <strong>When Pre Trip Inspecting a bus equipped with "Air Brakes" Remember P.L.A.B.S.</strong>
                 <div className="plabs-row">
