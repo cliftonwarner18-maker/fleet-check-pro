@@ -31,6 +31,11 @@ export default function FleetManagement() {
     queryFn: () => base44.entities.Bus.list("-bus_number")
   });
 
+  const { data: inspections = [] } = useQuery({
+    queryKey: ["inspections"],
+    queryFn: () => base44.entities.Inspection.list("-created_date", 500)
+  });
+
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.Bus.create(data),
     onSuccess: () => {
@@ -241,7 +246,8 @@ export default function FleetManagement() {
                   {bus.notes && (
                     <p className="text-sm text-slate-600 bg-slate-50 rounded p-2 mb-3">{bus.notes}</p>
                   )}
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 flex-wrap">
+                    <BusHistoryExport busNumber={bus.bus_number} inspections={inspections} />
                     <Button variant="outline" size="sm" onClick={() => handleEdit(bus)} className="flex-1">
                       <Edit className="w-3.5 h-3.5 mr-1" /> Edit
                     </Button>
