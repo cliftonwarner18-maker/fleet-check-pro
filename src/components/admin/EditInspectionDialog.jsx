@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -45,7 +45,7 @@ export default function EditInspectionDialog({ inspection, open, onClose }) {
   const isPre = inspection.inspection_type === "pre_trip";
   const isCombined = inspection.inspection_type === "combined";
   
-  React.useEffect(() => {
+  useEffect(() => {
     if (inspection?.is_locked) {
       setShowUnlockPrompt(true);
     }
