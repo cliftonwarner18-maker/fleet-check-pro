@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { Link } from "react-router-dom";
-import { ClipboardCheck, ClipboardList, LogOut, History, Bus, Shield } from "lucide-react";
+import { ClipboardCheck, ClipboardList, LogOut, Bus, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useQuery } from "@tanstack/react-query";
-import { format } from "date-fns";
-import { cn } from "@/lib/utils";
 
 export default function DriverHome() {
   const [user, setUser] = useState(null);
@@ -14,16 +11,7 @@ export default function DriverHome() {
     base44.auth.me().then(setUser);
   }, []);
 
-  const { data: recentInspections } = useQuery({
-    queryKey: ["my-inspections"],
-    queryFn: () => base44.entities.Inspection.filter(
-      { driver_name: user?.full_name },
-      "-created_date",
-      5
-    ),
-    enabled: !!user?.full_name,
-    initialData: [],
-  });
+
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#1B3A5C] to-[#0f2540]">
@@ -68,49 +56,6 @@ export default function DriverHome() {
             </div>
           </Link>
         </div>
-
-        {/* Recent Inspections */}
-        {recentInspections.length > 0 && (
-          <div className="space-y-3">
-            <div className="flex items-center gap-2 px-1">
-              <History className="w-4 h-4 text-blue-300" />
-              <h3 className="text-sm font-semibold text-blue-200 uppercase tracking-wide">Recent Submissions</h3>
-            </div>
-            <div className="space-y-2">
-              {recentInspections.map((insp) => (
-                <div key={insp.id} className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/5">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-white font-semibold text-sm">Bus #{insp.bus_number}</span>
-                        <span className={cn(
-                          "text-xs px-2 py-0.5 rounded-full font-medium",
-                          insp.inspection_type === "pre_trip"
-                            ? "bg-amber-500/20 text-amber-300"
-                            : "bg-blue-500/20 text-blue-300"
-                        )}>
-                          {insp.inspection_type === "pre_trip" ? "Pre-Trip" : "Post-Trip"}
-                        </span>
-                      </div>
-                      <p className="text-blue-300 text-xs mt-1">
-                        {format(new Date(insp.created_date), "MMM d, yyyy • h:mm a")}
-                      </p>
-                    </div>
-                    <div className={cn(
-                      "w-8 h-8 rounded-lg flex items-center justify-center",
-                      insp.is_satisfactory ? "bg-emerald-500/20" : "bg-red-500/20"
-                    )}>
-                      <div className={cn(
-                        "w-2.5 h-2.5 rounded-full",
-                        insp.is_satisfactory ? "bg-emerald-400" : "bg-red-400"
-                      )} />
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
 
         {/* Admin Console Access (only show for admin users) */}
         {user?.role === "admin" && (
