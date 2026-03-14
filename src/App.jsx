@@ -10,6 +10,7 @@ import DriverHome from './pages/DriverHome';
 import PreTrip from './pages/PreTrip';
 import PostTrip from './pages/PostTrip';
 import AdminDashboard from './pages/AdminDashboard';
+import FleetManagement from './pages/FleetManagement';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -38,6 +39,7 @@ const AuthenticatedApp = () => {
       <Route path="/PreTrip" element={<PreTrip />} />
       <Route path="/PostTrip" element={<PostTrip />} />
       <Route path="/AdminDashboard" element={<AdminDashboard />} />
+      <Route path="/FleetManagement" element={<FleetManagement />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
