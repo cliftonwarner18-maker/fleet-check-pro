@@ -8,6 +8,7 @@ import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import DefectBadge from "./DefectBadge";
+import InspectionPDFExport from "./InspectionPDFExport";
 
 export default function InspectionDetailModal({ inspection, open, onClose }) {
   const [adminNotes, setAdminNotes] = useState(inspection?.admin_notes || "");
@@ -28,9 +29,12 @@ export default function InspectionDetailModal({ inspection, open, onClose }) {
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-xl">
-            Bus #{inspection.bus_number} — {inspection.inspection_type === "pre_trip" ? "Pre-Trip" : "Post-Trip"}
-          </DialogTitle>
+          <div className="flex items-center justify-between">
+            <DialogTitle className="text-xl">
+              Bus #{inspection.bus_number} — {inspection.inspection_type === "pre_trip" ? "Pre-Trip" : "Post-Trip"}
+            </DialogTitle>
+            <InspectionPDFExport inspection={inspection} />
+          </div>
         </DialogHeader>
 
         <div className="space-y-4">

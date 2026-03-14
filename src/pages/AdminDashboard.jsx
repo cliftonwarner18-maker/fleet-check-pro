@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Bus, AlertTriangle, CheckCircle, Clock, Search, Shield } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Bus, AlertTriangle, CheckCircle, Clock, Search, Shield, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import InspectionCard from "@/components/admin/InspectionCard";
 import InspectionDetailModal from "@/components/admin/InspectionDetailModal";
@@ -13,6 +15,7 @@ import TD28DExport from "@/components/admin/TD28DExport";
 import { format } from "date-fns";
 
 export default function AdminDashboard() {
+  const navigate = useNavigate();
   const [statusFilter, setStatusFilter] = useState("pending");
   const [typeFilter, setTypeFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
@@ -62,6 +65,14 @@ export default function AdminDashboard() {
         <div className="max-w-7xl mx-auto px-6 py-5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => navigate("/DriverHome")}
+                className="rounded-xl"
+              >
+                <ArrowLeft className="w-5 h-5" />
+              </Button>
               <div className="bg-[#1B3A5C] p-2.5 rounded-xl">
                 <Shield className="w-5 h-5 text-white" />
               </div>
