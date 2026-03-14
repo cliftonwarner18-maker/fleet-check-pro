@@ -17,7 +17,6 @@ export default function EditInspectionDialog({ inspection, open, onClose }) {
   const queryClient = useQueryClient();
   const [saving, setSaving] = useState(false);
   const [editReason, setEditReason] = useState("");
-  const [showUnlockPrompt, setShowUnlockPrompt] = useState(false);
   
   const [formData, setFormData] = useState({
     driver_name: inspection?.driver_name || "",
@@ -44,12 +43,6 @@ export default function EditInspectionDialog({ inspection, open, onClose }) {
 
   const isPre = inspection.inspection_type === "pre_trip";
   const isCombined = inspection.inspection_type === "combined";
-  
-  useEffect(() => {
-    if (inspection?.is_locked) {
-      setShowUnlockPrompt(true);
-    }
-  }, [inspection]);
 
   const toggleDefect = (id) => {
     setFormData(prev => ({
