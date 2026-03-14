@@ -66,7 +66,7 @@ export default function PreTrip() {
   }, [existingInspection]);
 
   useEffect(() => {
-    if (isEditing || !driverName) return; // Skip if editing or already loaded
+    if (isEditing) return; // Skip if editing (will be loaded from existingInspection instead)
     async function loadUser() {
       const user = await base44.auth.me();
       if (user?.full_name) {
