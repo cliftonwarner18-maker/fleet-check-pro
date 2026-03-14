@@ -32,7 +32,17 @@ export default function PreTrip() {
   useEffect(() => {
     async function loadUser() {
       const user = await base44.auth.me();
-      if (user?.full_name) setDriverName(user.full_name);
+      if (user?.full_name) {
+        setDriverName(user.full_name);
+      } else if (user?.email) {
+        // Extract name from email format: firstname.lastname@nhcs.net
+        const emailName = user.email.split('@')[0];
+        const nameParts = emailName.split('.');
+        const formattedName = nameParts
+          .map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+          .join(' ');
+        setDriverName(formattedName);
+      }
     }
     loadUser();
   }, []);
