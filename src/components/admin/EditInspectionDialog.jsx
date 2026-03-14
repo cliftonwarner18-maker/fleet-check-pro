@@ -71,10 +71,12 @@ export default function EditInspectionDialog({ inspection, open, onClose }) {
 
     setSaving(true);
     const editLog = `\n[EDITED ${new Date().toLocaleString()}]: ${editReason}`;
-    await base44.entities.Inspection.update(inspection.id, {
+    const dataToSave = {
       ...formData,
+      num_transported: formData.num_transported ? parseInt(formData.num_transported) : undefined,
       admin_notes: (formData.admin_notes || "") + editLog
-    });
+    };
+    await base44.entities.Inspection.update(inspection.id, dataToSave);
     toast.success("Inspection updated successfully");
     queryClient.invalidateQueries({ queryKey: ["inspections"] });
     setSaving(false);
