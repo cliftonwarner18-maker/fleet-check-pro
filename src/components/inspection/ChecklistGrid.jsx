@@ -3,7 +3,7 @@ import { CHECKLIST_ITEMS, PLABS_ITEMS } from "./ChecklistData";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 
-export default function ChecklistGrid({ selectedDefects, onToggle, airBrakeChecks, onToggleAirBrake }) {
+export default function ChecklistGrid({ selectedDefects, onToggle, airBrakeChecks, onToggleAirBrake, showECItems = false }) {
   return (
     <div className="space-y-6">
       {/* Main Checklist */}

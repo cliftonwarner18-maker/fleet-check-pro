@@ -38,9 +38,6 @@ export const CHECKLIST_ITEMS = [
   { id: "32b", label: "First Aid Kit / Fluid Cleanup" },
   { id: "33", label: "Seat Belts" },
   { id: "34", label: "Car Seats - Built In" },
-  { id: "35", label: "Safety Vests - EC" },
-  { id: "36", label: "Wheelchair Student Strap System - EC" },
-  { id: "37", label: "Wheelchair Lift - EC" },
   { id: "38", label: "Warning Lights" },
   { id: "38a", label: "Warning Lights - Amber" },
   { id: "38r", label: "Warning Lights - Red" },
@@ -54,10 +51,19 @@ export const PLABS_ITEMS = [
   { id: "S", label: "S - Service Brake" },
 ];
 
+export const EC_ITEMS = [
+  { id: "35", label: "Safety Vests" },
+  { id: "36", label: "Wheelchair Student Strap System" },
+  { id: "37", label: "Wheelchair Lift" },
+  { id: "38ec", label: "Fire Blanket" },
+  { id: "39ec", label: "Wheelchair Securement Devices" },
+];
+
 export const FUEL_LEVELS = ["E", "1/8", "1/4", "3/8", "1/2", "5/8", "3/4", "7/8", "F"];
 
 export const DEFECT_LABEL_MAP = {};
 CHECKLIST_ITEMS.forEach(item => { DEFECT_LABEL_MAP[item.id] = item.label; });
 PLABS_ITEMS.forEach(item => { DEFECT_LABEL_MAP[item.id] = item.label; });
+EC_ITEMS.forEach(item => { DEFECT_LABEL_MAP[item.id] = item.label; });
 
 export default CHECKLIST_ITEMS;
