@@ -17,6 +17,7 @@ export default function EditInspectionDialog({ inspection, open, onClose }) {
   const queryClient = useQueryClient();
   const [saving, setSaving] = useState(false);
   const [editReason, setEditReason] = useState("");
+  const [showUnlockPrompt, setShowUnlockPrompt] = useState(false);
   
   const [formData, setFormData] = useState({
     driver_name: inspection?.driver_name || "",
@@ -42,6 +43,13 @@ export default function EditInspectionDialog({ inspection, open, onClose }) {
   if (!inspection) return null;
 
   const isPre = inspection.inspection_type === "pre_trip";
+  const isCombined = inspection.inspection_type === "combined";
+  
+  React.useEffect(() => {
+    if (inspection?.is_locked) {
+      setShowUnlockPrompt(true);
+    }
+  }, [inspection]);
 
   const toggleDefect = (id) => {
     setFormData(prev => ({
@@ -65,21 +73,23 @@ export default function EditInspectionDialog({ inspection, open, onClose }) {
 
   const handleSave = async () => {
     if (!editReason.trim()) {
-      toast.error("Please provide a reason for editing this inspection");
+      toast.error(inspection.is_locked ? "Please provide a reason for unlocking and editing this locked inspection" : "Please provide a reason for editing this inspection");
       return;
     }
 
     setSaving(true);
     const editLog = `\n[EDITED ${new Date().toLocaleString()}]: ${editReason}`;
+    const unlockLog = inspection.is_locked ? `\n[UNLOCKED ${new Date().toLocaleString()}]: ${editReason}` : "";
     const dataToSave = {
       ...formData,
       bus_type: formData.is_ec_bus ? "ec" : "regular",
       num_transported: formData.num_transported ? parseInt(formData.num_transported) : undefined,
-      admin_notes: (formData.admin_notes || "") + editLog
+      admin_notes: (formData.admin_notes || "") + unlockLog + editLog,
+      is_locked: false
     };
     delete dataToSave.is_ec_bus;
     await base44.entities.Inspection.update(inspection.id, dataToSave);
-    toast.success("Inspection updated successfully");
+    toast.success(inspection.is_locked ? "Locked inspection unlocked and updated" : "Inspection updated successfully");
     queryClient.invalidateQueries({ queryKey: ["inspections"] });
     setSaving(false);
     onClose();
@@ -90,21 +100,29 @@ export default function EditInspectionDialog({ inspection, open, onClose }) {
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
-            Edit {isPre ? "Pre-Trip" : "Post-Trip"} Inspection - Bus #{inspection.bus_number}
+            Edit {isCombined ? "Combined Daily" : isPre ? "Pre-Trip" : "Post-Trip"} Inspection - Bus #{inspection.bus_number}
+            {inspection.is_locked && <span className="text-red-600 ml-2">(Locked)</span>}
           </DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4">
           {/* Edit Reason */}
-          <div className="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-lg">
-            <Label className="text-sm font-semibold text-amber-900">Reason for Edit *</Label>
+          <div className={inspection.is_locked ? "bg-red-50 border-l-4 border-red-500 p-4 rounded-r-lg" : "bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-lg"}>
+            <Label className={inspection.is_locked ? "text-sm font-semibold text-red-900" : "text-sm font-semibold text-amber-900"}>
+              {inspection.is_locked ? "⚠ Reason for Unlocking & Editing (Required) *" : "Reason for Edit *"}
+            </Label>
             <Textarea
               value={editReason}
               onChange={(e) => setEditReason(e.target.value)}
-              placeholder="Document why this inspection is being modified..."
+              placeholder={inspection.is_locked ? "This inspection is LOCKED. Provide a detailed reason for unlocking and editing..." : "Document why this inspection is being modified..."}
               className="mt-2 bg-white"
               rows={2}
             />
+            {inspection.is_locked && (
+              <p className="text-xs text-red-700 mt-2">
+                This is a completed combined daily inspection. Editing will unlock the record and append an audit trail.
+              </p>
+            )}
           </div>
 
           {/* Basic Info */}
