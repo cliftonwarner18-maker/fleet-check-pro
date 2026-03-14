@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Plus, Bus, Edit, Trash2, ArrowLeft } from "lucide-react";
+import BusHistoryExport from "@/components/admin/BusHistoryExport";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
