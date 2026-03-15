@@ -18,9 +18,17 @@ export default function InspectionCard({ inspection, onView, onUpdateStatus, onE
   const statusCfg = STATUS_CONFIG[inspection.status] || STATUS_CONFIG.pending_post_trip;
   const StatusIcon = statusCfg.icon;
   const allDefects = [...(inspection.defects || []), ...(inspection.air_brake_checks || [])];
+  const needsRepairs = !inspection.is_satisfactory && !inspection.mechanic_certified;
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 p-5 hover:shadow-md transition-shadow">
+    <div className="bg-white rounded-xl border border-slate-200 hover:shadow-md transition-shadow overflow-hidden">
+      {needsRepairs && (
+        <div className="bg-red-600 text-white px-4 py-2 text-sm font-bold flex items-center gap-2">
+          <Wrench className="w-4 h-4" />
+          REPAIRS NEEDED - Awaiting Mechanic Certification
+        </div>
+      )}
+      <div className="p-5">
       <div className="flex items-start justify-between mb-3">
         <div>
           <div className="flex items-center gap-2">
@@ -106,6 +114,7 @@ export default function InspectionCard({ inspection, onView, onUpdateStatus, onE
         >
           <Trash2 className="w-3.5 h-3.5 mr-1" /> Delete
         </Button>
+      </div>
       </div>
     </div>
   );

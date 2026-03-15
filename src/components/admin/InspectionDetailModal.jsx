@@ -204,16 +204,6 @@ export default function InspectionDetailModal({ inspection, open, onClose }) {
             </div>
 
             <div>
-              <p className="text-sm font-semibold text-slate-700 mb-1">Mechanic Notes:</p>
-              <Textarea
-                value={mechanicNotes}
-                onChange={(e) => setMechanicNotes(e.target.value)}
-                placeholder="Mechanic work notes and findings..."
-                className="min-h-[80px] rounded-xl"
-              />
-            </div>
-
-            <div>
               <p className="text-sm font-semibold text-slate-700 mb-1">Admin Notes:</p>
               <Textarea
                 value={adminNotes}
@@ -243,6 +233,16 @@ export default function InspectionDetailModal({ inspection, open, onClose }) {
               <div className="flex items-center gap-2 text-amber-800">
                 <Wrench className="w-5 h-5" />
                 <p className="font-bold">Mechanic Certification</p>
+              </div>
+              
+              <div>
+                <label className="text-xs font-medium text-slate-600 mb-1 block">Repair Synopsis</label>
+                <Textarea
+                  value={mechanicNotes}
+                  onChange={(e) => setMechanicNotes(e.target.value)}
+                  placeholder="Detail the work performed, parts replaced, tests conducted..."
+                  className="min-h-[80px] rounded-xl"
+                />
               </div>
               
               <Input
