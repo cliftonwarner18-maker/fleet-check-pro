@@ -120,12 +120,11 @@ export default function PreTrip() {
     
     let customTimestamp = null;
     if (inspectionDate && inspectionTime) {
-      const localDateTime = `${inspectionDate}T${inspectionTime}:00`;
-      const etDate = new Date(localDateTime);
-      customTimestamp = new Date(etDate.getTime() + (etDate.getTimezoneOffset() * 60000)).toISOString();
+      const etDateTime = `${inspectionDate}T${inspectionTime}:00-05:00`;
+      customTimestamp = new Date(etDateTime).toISOString();
     } else if (inspectionDate) {
-      const etDate = new Date(inspectionDate);
-      customTimestamp = new Date(etDate.getTime() + (etDate.getTimezoneOffset() * 60000)).toISOString();
+      const etDateTime = `${inspectionDate}T00:00:00-05:00`;
+      customTimestamp = new Date(etDateTime).toISOString();
     }
     
     const inspectionData = {
