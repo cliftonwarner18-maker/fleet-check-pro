@@ -2,6 +2,7 @@ import React, { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { FileDown } from "lucide-react";
 import { format } from "date-fns";
+import { formatInTimeZone } from "date-fns-tz";
 import { DEFECT_LABEL_MAP } from "@/components/inspection/ChecklistData";
 import { base44 } from "@/api/base44Client";
 
@@ -77,7 +78,7 @@ export default function TD28DExport({ inspections, date }) {
                 return (
                   <tr key={bus.id}>
                     <td>{insp.bus_number}</td>
-                    <td>{format(new Date(insp.created_date), "h:mm a")}</td>
+                    <td>{formatInTimeZone(new Date(insp.created_date), "America/New_York", "h:mm a")}</td>
                     <td className="ok-cell">{insp.is_satisfactory ? "✓" : ""}</td>
                     <td>{insp.num_transported || ""}</td>
                     <td>{remarks}</td>
