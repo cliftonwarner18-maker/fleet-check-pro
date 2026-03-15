@@ -1,6 +1,5 @@
 import React from "react";
 import { formatInTimeZone } from "date-fns-tz";
-import { formatInTimeZone } from "date-fns-tz";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Clock, Eye, Wrench, Edit, Trash2 } from "lucide-react";
@@ -32,7 +31,7 @@ export default function InspectionCard({ inspection, onView, onUpdateStatus, onE
             </Badge>
           </div>
           <p className="text-slate-500 text-sm mt-1">
-            {inspection.driver_name} • {formatInTimeZone(new Date(inspection.created_date), "America/New_York", "MMM d, yyyy • h:mm a")}
+            {inspection.driver_name} • {formatInTimeZone(new Date(inspection.created_date), "America/New_York", "MMM d, yyyy • h:mm a")} ET
           </p>
         </div>
         <Badge variant="outline" className="text-xs">

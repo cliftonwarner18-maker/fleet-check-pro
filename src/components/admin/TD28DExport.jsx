@@ -85,7 +85,7 @@ export default function TD28DExport({ inspections, date }) {
                 return (
                   <tr key={bus.id}>
                     <td>{insp.bus_number}</td>
-                    <td>{formatInTimeZone(new Date(insp.created_date), "America/New_York", "h:mm a")}</td>
+                    <td>{formatInTimeZone(new Date(insp.created_date), "America/New_York", "h:mm a")} ET</td>
                     <td className="ok-cell">{insp.is_satisfactory ? "✓" : ""}</td>
                     <td>{insp.num_transported || ""}</td>
                     <td>{allRemarks}</td>

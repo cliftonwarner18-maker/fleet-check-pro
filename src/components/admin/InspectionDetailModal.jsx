@@ -46,7 +46,7 @@ export default function InspectionDetailModal({ inspection, open, onClose }) {
             </div>
             <div>
               <p className="text-slate-500">Date/Time</p>
-              <p className="font-semibold">{formatInTimeZone(new Date(inspection.created_date), 'America/New_York', 'MMM d, yyyy h:mm a')}</p>
+              <p className="font-semibold">{formatInTimeZone(new Date(inspection.created_date), 'America/New_York', 'MMM d, yyyy h:mm a')} ET</p>
             </div>
             <div>
               <p className="text-slate-500">Route(s)</p>
