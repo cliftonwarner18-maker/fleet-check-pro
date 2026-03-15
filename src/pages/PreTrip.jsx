@@ -141,7 +141,7 @@ export default function PreTrip() {
   return (
     <div className="min-h-screen bg-slate-50">
       <div className="max-w-lg mx-auto px-4 py-6 space-y-5">
-        <NCHeader title="Pre-Trip Inspection" subtitle="NC School / Activity Bus" />
+        <NCHeader title="Pre-Trip Inspection" subtitle="FleetCheck Pro • NC School / Activity Bus" />
         
         <SafetyDisclosure />
 
@@ -286,7 +286,7 @@ export default function PreTrip() {
         </div>
 
         <p className="text-center text-xs text-slate-400 pb-6">
-          New Hanover County Schools • Wilmington, NC
+          FleetCheck Pro • New Hanover County Schools • Wilmington, NC
         </p>
       </div>
     </div>
