@@ -66,7 +66,10 @@ export default function AdminDashboard() {
   };
 
   const filtered = inspections.filter((insp) => {
-    const matchStatus = statusFilter === "all" || insp.status === statusFilter;
+    const matchStatus = statusFilter === "all" || 
+      (statusFilter === "active_defects" 
+        ? (!insp.is_satisfactory || insp.repair_still_needed) 
+        : insp.status === statusFilter);
     const matchType = typeFilter === "all" || insp.inspection_type === typeFilter;
     const matchSearch = !searchQuery ||
       insp.bus_number?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -78,7 +81,9 @@ export default function AdminDashboard() {
   const todayCount = inspections.filter(i =>
     format(new Date(i.created_date), "yyyy-MM-dd") === format(new Date(), "yyyy-MM-dd")
   ).length;
-  const defectCount = inspections.filter(i => !i.is_satisfactory && i.status === "pending_post_trip").length;
+  const defectCount = inspections.filter(i => 
+    (!i.is_satisfactory && i.status === "pending_post_trip") || i.repair_still_needed
+  ).length;
 
   const todayInspections = inspections.filter(i =>
     format(new Date(i.created_date), "yyyy-MM-dd") === format(new Date(), "yyyy-MM-dd")
@@ -177,6 +182,7 @@ export default function AdminDashboard() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="active_defects">Active Defects</SelectItem>
                 <SelectItem value="pending_post_trip">Pending Post-Trip</SelectItem>
                 <SelectItem value="completed">Completed</SelectItem>
                 <SelectItem value="reviewed">Reviewed</SelectItem>

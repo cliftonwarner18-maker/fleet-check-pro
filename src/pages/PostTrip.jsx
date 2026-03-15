@@ -34,6 +34,7 @@ export default function PostTrip() {
   const [postConcerns, setPostConcerns] = useState("");
   const [postRemarks, setPostRemarks] = useState("");
   const [numTransported, setNumTransported] = useState("");
+  const [repairStillNeeded, setRepairStillNeeded] = useState(false);
 
   const { data: buses = [] } = useQuery({
     queryKey: ["buses"],
@@ -91,6 +92,7 @@ export default function PostTrip() {
       setPostConcerns(existingPostTrip.post_trip_concerns || "");
       setPostRemarks(existingPostTrip.post_trip_remarks || "");
       setNumTransported(existingPostTrip.num_transported ? existingPostTrip.num_transported.toString() : "");
+      setRepairStillNeeded(existingPostTrip.repair_still_needed || false);
     }
   }, [existingPostTrip]);
 
@@ -129,6 +131,7 @@ export default function PostTrip() {
         odometer_end: odometerEnd,
         no_students_left: noStudentsLeft,
         num_transported: numTransported ? parseInt(numTransported) : undefined,
+        repair_still_needed: repairStillNeeded,
       };
       await base44.entities.Inspection.update(postTripId, updateData);
       queryClient.invalidateQueries({ queryKey: ["inspections"] });
@@ -155,6 +158,7 @@ export default function PostTrip() {
         odometer_end: odometerEnd,
         no_students_left: noStudentsLeft,
         num_transported: numTransported ? parseInt(numTransported) : undefined,
+        repair_still_needed: repairStillNeeded,
         status: "completed",
         is_locked: true,
         pre_trip_id: preTripId,
@@ -182,6 +186,7 @@ export default function PostTrip() {
         odometer_end: odometerEnd,
         no_students_left: noStudentsLeft,
         num_transported: numTransported ? parseInt(numTransported) : undefined,
+        repair_still_needed: repairStillNeeded,
         status: "completed",
         is_locked: false,
       });
@@ -297,6 +302,26 @@ export default function PostTrip() {
             <p className="text-xs text-slate-500 mt-0.5">No end-of-day issues to report</p>
           </div>
         </button>
+
+        {/* Still Needs Repair (only show if linked to pre-trip with defects) */}
+        {preTrip && !preTrip.is_satisfactory && (
+          <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
+            <div className="flex items-center gap-2">
+              <Checkbox
+                checked={repairStillNeeded}
+                onCheckedChange={setRepairStillNeeded}
+              />
+              <label className="text-sm font-medium text-slate-700">
+                ⚠ Issue Still Needs Repair — Pre-Trip defects not resolved
+              </label>
+            </div>
+            {repairStillNeeded && (
+              <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-3 mt-3">
+                This will flag the inspection as "Issue still pending after post trip" for fleet dispatchers.
+              </p>
+            )}
+          </div>
+        )}
 
         {/* Concerns */}
         <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 space-y-3">
