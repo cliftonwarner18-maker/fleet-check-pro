@@ -14,6 +14,9 @@ import InspectionDetailModal from "@/components/admin/InspectionDetailModal";
 import EditInspectionDialog from "@/components/admin/EditInspectionDialog";
 import TD28DExport from "@/components/admin/TD28DExport";
 import { format } from "date-fns";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar as CalendarIcon } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -30,7 +33,7 @@ export default function AdminDashboard() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [typeFilter, setTypeFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
-  const [dateFilter, setDateFilter] = useState("today");
+  const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedInspection, setSelectedInspection] = useState(null);
   const [editingInspection, setEditingInspection] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
@@ -76,15 +79,9 @@ export default function AdminDashboard() {
       insp.bus_number?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       insp.driver_name?.toLowerCase().includes(searchQuery.toLowerCase());
     
-    let matchDate = true;
-    if (dateFilter === "today") {
-      matchDate = format(new Date(insp.created_date), "yyyy-MM-dd") === format(new Date(), "yyyy-MM-dd");
-    } else if (dateFilter === "week") {
-      const weekAgo = new Date();
-      weekAgo.setDate(weekAgo.getDate() - 7);
-      matchDate = new Date(insp.created_date) >= weekAgo;
-    }
-    // "all" = no date filter
+    const matchDate = selectedDate 
+      ? format(new Date(insp.created_date), "yyyy-MM-dd") === format(selectedDate, "yyyy-MM-dd")
+      : true;
     
     return matchStatus && matchType && matchSearch && matchDate;
   });
@@ -212,16 +209,31 @@ export default function AdminDashboard() {
                 <SelectItem value="combined">Combined Daily</SelectItem>
               </SelectContent>
             </Select>
-            <Select value={dateFilter} onValueChange={setDateFilter}>
-              <SelectTrigger className="w-40 h-10 rounded-xl">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="today">Today Only</SelectItem>
-                <SelectItem value="week">Past Week</SelectItem>
-                <SelectItem value="all">All Dates</SelectItem>
-              </SelectContent>
-            </Select>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" className="h-10 rounded-xl gap-2 min-w-[180px]">
+                  <CalendarIcon className="w-4 h-4" />
+                  {selectedDate ? format(selectedDate, "MMM d, yyyy") : "Select date"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={selectedDate}
+                  onSelect={setSelectedDate}
+                  initialFocus
+                />
+                <div className="p-3 border-t">
+                  <Button
+                    variant="outline"
+                    className="w-full rounded-xl"
+                    onClick={() => setSelectedDate(new Date())}
+                  >
+                    Today
+                  </Button>
+                </div>
+              </PopoverContent>
+            </Popover>
           </div>
         </div>
 
