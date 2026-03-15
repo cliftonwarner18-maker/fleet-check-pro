@@ -74,15 +74,16 @@ export default function InspectionDetailModal({ inspection, open, onClose }) {
                 <p className="font-semibold">{(parseFloat(inspection.odometer_end) - parseFloat(inspection.odometer_start)).toFixed(1)} mi</p>
               </div>
             )}
-            {inspection.inspection_type === "combined" && inspection.created_date && inspection.updated_date && (
+            {inspection.inspection_type === "combined" && (
               <div>
                 <p className="text-slate-500">Total Hours</p>
                 <p className="font-semibold">{(() => {
-                  const created = new Date(inspection.created_date);
-                  const updated = new Date(inspection.updated_date);
-                  const diffMs = updated - created;
-                  const hours = Math.floor(diffMs / (1000 * 60 * 60));
-                  const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+                  const preTrip = new Date(inspection.inspection_datetime || inspection.submitted_at || inspection.created_date);
+                  const postTrip = new Date(inspection.post_trip_datetime || inspection.submitted_at || inspection.created_date);
+                  const diffMs = postTrip - preTrip;
+                  const totalMinutes = Math.floor(diffMs / (1000 * 60));
+                  const hours = Math.floor(totalMinutes / 60);
+                  const minutes = totalMinutes % 60;
                   return diffMs > 0 ? `${hours}h ${minutes}m` : 'N/A';
                 })()}</p>
               </div>
