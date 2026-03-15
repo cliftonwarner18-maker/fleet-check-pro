@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 import NCHeader from "@/components/inspection/NCHeader";
 import SafetyDisclosure from "@/components/inspection/SafetyDisclosure";
 import FuelGauge from "@/components/inspection/FuelGauge";
+import { formatInTimeZone } from "date-fns-tz";
 
 export default function PostTrip() {
   const navigate = useNavigate();
@@ -250,8 +251,8 @@ export default function PostTrip() {
                   type="button"
                   onClick={() => {
                     const now = new Date();
-                    setInspectionDate(now.toISOString().split('T')[0]);
-                    setInspectionTime(now.toTimeString().slice(0, 5));
+                    setInspectionDate(formatInTimeZone(now, "America/New_York", "yyyy-MM-dd"));
+                    setInspectionTime(formatInTimeZone(now, "America/New_York", "HH:mm"));
                   }}
                   variant="outline"
                   className="h-12 rounded-xl px-4 whitespace-nowrap"
