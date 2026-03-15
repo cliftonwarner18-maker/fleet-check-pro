@@ -196,8 +196,10 @@ export default function CombinedInspectionPDF({ inspection }) {
               const preTrip = new Date(inspection.inspection_datetime || inspection.submitted_at || inspection.created_date);
               const postTrip = new Date(inspection.submitted_at || inspection.created_date);
               const diffMs = postTrip - preTrip;
-              const hours = Math.floor(diffMs / (1000 * 60 * 60));
-              const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+              const totalMinutes = Math.floor(diffMs / (1000 * 60));
+              if (totalMinutes > 720) return 'N/A';
+              const hours = Math.floor(totalMinutes / 60);
+              const minutes = totalMinutes % 60;
               return diffMs > 0 ? `${hours}h ${minutes}m` : 'N/A';
             })()}</div>
           </div>
@@ -239,8 +241,10 @@ export default function CombinedInspectionPDF({ inspection }) {
               const preTrip = new Date(inspection.inspection_datetime || inspection.submitted_at || inspection.created_date);
               const postTrip = new Date(inspection.submitted_at || inspection.created_date);
               const diffMs = postTrip - preTrip;
-              const hours = Math.floor(diffMs / (1000 * 60 * 60));
-              const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+              const totalMinutes = Math.floor(diffMs / (1000 * 60));
+              if (totalMinutes > 720) return 'N/A';
+              const hours = Math.floor(totalMinutes / 60);
+              const minutes = totalMinutes % 60;
               return diffMs > 0 ? `${hours}h ${minutes}m` : 'N/A';
             })()}</div>
           </div>
