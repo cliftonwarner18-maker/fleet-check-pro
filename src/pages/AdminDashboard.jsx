@@ -81,7 +81,7 @@ export default function AdminDashboard() {
       insp.driver_name?.toLowerCase().includes(searchQuery.toLowerCase());
     
     const matchDate = selectedDate 
-      ? formatInTimeZone(new Date(insp.created_date), "America/New_York", "yyyy-MM-dd") === format(selectedDate, "yyyy-MM-dd")
+      ? formatInTimeZone(new Date(insp.inspection_datetime || insp.submitted_at || insp.created_date), "America/New_York", "yyyy-MM-dd") === format(selectedDate, "yyyy-MM-dd")
       : true;
     
     return matchStatus && matchType && matchSearch && matchDate;
@@ -89,14 +89,14 @@ export default function AdminDashboard() {
 
   const pendingCount = inspections.filter(i => i.status === "pending_post_trip").length;
   const todayCount = inspections.filter(i =>
-    formatInTimeZone(new Date(i.created_date), "America/New_York", "yyyy-MM-dd") === formatInTimeZone(new Date(), "America/New_York", "yyyy-MM-dd")
+    formatInTimeZone(new Date(i.inspection_datetime || i.submitted_at || i.created_date), "America/New_York", "yyyy-MM-dd") === formatInTimeZone(new Date(), "America/New_York", "yyyy-MM-dd")
   ).length;
   const defectCount = inspections.filter(i => 
     (!i.is_satisfactory && i.status === "pending_post_trip") || i.repair_still_needed
   ).length;
 
   const todayInspections = inspections.filter(i =>
-    formatInTimeZone(new Date(i.created_date), "America/New_York", "yyyy-MM-dd") === formatInTimeZone(new Date(), "America/New_York", "yyyy-MM-dd")
+    formatInTimeZone(new Date(i.inspection_datetime || i.submitted_at || i.created_date), "America/New_York", "yyyy-MM-dd") === formatInTimeZone(new Date(), "America/New_York", "yyyy-MM-dd")
   );
 
   return (
