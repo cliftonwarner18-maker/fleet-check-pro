@@ -36,7 +36,7 @@ export default function PostTrip() {
   const [postRemarks, setPostRemarks] = useState("");
   const [numTransported, setNumTransported] = useState("");
   const [repairStillNeeded, setRepairStillNeeded] = useState(false);
-  const [inspectionDate, setInspectionDate] = useState(new Date().toISOString().split('T')[0]);
+  const [inspectionDate, setInspectionDate] = useState("");
   const [inspectionTime, setInspectionTime] = useState("");
 
   const { data: buses = [] } = useQuery({
@@ -128,9 +128,6 @@ export default function PostTrip() {
     if (inspectionDate && inspectionTime) {
       const etDateTimeString = `${inspectionDate} ${inspectionTime}:00`;
       customTimestamp = toDate(etDateTimeString, { timeZone: "America/New_York" }).toISOString();
-    } else if (inspectionDate) {
-      const etDateTimeString = `${inspectionDate} 00:00:00`;
-      customTimestamp = toDate(etDateTimeString, { timeZone: "America/New_York" }).toISOString();
     }
     
     if (isEditing && existingPostTrip) {
@@ -181,7 +178,7 @@ export default function PostTrip() {
         is_locked: true,
         pre_trip_id: preTripId,
         inspection_datetime: preTrip.inspection_datetime || preTrip.submitted_at || preTrip.created_date,
-        post_trip_datetime: customTimestamp || new Date().toISOString(),
+        post_trip_datetime: customTimestamp,
         submitted_at: new Date().toISOString(),
       });
       
