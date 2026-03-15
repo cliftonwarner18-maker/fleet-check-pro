@@ -231,6 +231,24 @@ export default function CombinedInspectionPDF({ inspection }) {
           </div>
         )}
 
+        <div className="section" style={{ background: '#f0fdf4', border: '2px solid #22c55e' }}>
+          <div className="section-title">DAILY INSPECTION SUMMARY</div>
+          <div className="row">
+            <div className="field"><span className="label">Total Miles Driven:</span> {inspection.odometer_start && inspection.odometer_end ? (parseFloat(inspection.odometer_end) - parseFloat(inspection.odometer_start)).toFixed(1) : 'N/A'} miles</div>
+            <div className="field"><span className="label">Total Hours:</span> {(() => {
+              const created = new Date(inspection.created_date);
+              const updated = new Date(inspection.updated_date);
+              const diffMs = updated - created;
+              const hours = Math.floor(diffMs / (1000 * 60 * 60));
+              const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+              return `${hours}h ${minutes}m`;
+            })()}</div>
+          </div>
+          <div className="field" style={{ marginTop: '8px' }}>
+            <span className="label">Status:</span> {inspection.is_satisfactory ? '✓ Bus is Safe and Satisfactory' : '⚠ Defects Documented'} • {inspection.no_students_left ? '✓ No Students Left on Bus' : '⚠ Student Check Incomplete'}
+          </div>
+        </div>
+
         <div className="section">
           <div className="section-title">CERTIFICATION</div>
           <p style={{ margin: '10px 0' }}>

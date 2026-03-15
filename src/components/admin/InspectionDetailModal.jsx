@@ -67,6 +67,25 @@ export default function InspectionDetailModal({ inspection, open, onClose }) {
                 <p className="font-semibold">{inspection.odometer_end}</p>
               </div>
             )}
+            {inspection.inspection_type === "combined" && inspection.odometer_start && inspection.odometer_end && (
+              <div>
+                <p className="text-slate-500">Total Miles</p>
+                <p className="font-semibold">{(parseFloat(inspection.odometer_end) - parseFloat(inspection.odometer_start)).toFixed(1)} mi</p>
+              </div>
+            )}
+            {inspection.inspection_type === "combined" && inspection.created_date && inspection.updated_date && (
+              <div>
+                <p className="text-slate-500">Total Hours</p>
+                <p className="font-semibold">{(() => {
+                  const created = new Date(inspection.created_date);
+                  const updated = new Date(inspection.updated_date);
+                  const diffMs = updated - created;
+                  const hours = Math.floor(diffMs / (1000 * 60 * 60));
+                  const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+                  return `${hours}h ${minutes}m`;
+                })()}</p>
+              </div>
+            )}
             {inspection.start_fuel_level && (
               <div>
                 <p className="text-slate-500">Start Fuel</p>
