@@ -236,22 +236,6 @@ export default function CombinedInspectionPDF({ inspection }) {
           </div>
         )}
 
-        {inspection.mechanic_certified && (
-          <div className="section" style={{ background: '#f0fdf4', border: '2px solid #22c55e' }}>
-            <div className="section-title">✓ MECHANIC CERTIFICATION - ALL DEFECTS CORRECTED</div>
-            <div className="row">
-              <div className="field"><span className="label">Certified By:</span> {inspection.mechanic_certified_by || 'N/A'}</div>
-              <div className="field"><span className="label">Certification Date/Time:</span> {inspection.mechanic_certified_datetime ? formatInTimeZone(new Date(inspection.mechanic_certified_datetime), "America/New_York", "MM/dd/yyyy h:mm a") + ' ET' : 'N/A'}</div>
-            </div>
-            {inspection.mechanic_notes && (
-              <div className="field" style={{ marginTop: '10px' }}>
-                <span className="label">Repair Synopsis:</span>
-                <div style={{ marginTop: '5px', whiteSpace: 'pre-wrap' }}>{inspection.mechanic_notes}</div>
-              </div>
-            )}
-          </div>
-        )}
-
         <div className="section" style={{ background: '#f0fdf4', border: '2px solid #22c55e' }}>
           <div className="section-title">DAILY INSPECTION SUMMARY</div>
           <div className="row">
@@ -274,6 +258,22 @@ export default function CombinedInspectionPDF({ inspection }) {
             <span className="label">Status:</span> {inspection.is_satisfactory ? '✓ Bus is Safe and Satisfactory' : '⚠ Defects Documented'} • {inspection.no_students_left ? '✓ No Students Left on Bus' : '⚠ Student Check Incomplete'}
           </div>
         </div>
+
+        {inspection.mechanic_certified && (
+          <div className="section" style={{ background: '#f0fdf4', border: '2px solid #22c55e' }}>
+            <div className="section-title">✓ MECHANIC CERTIFICATION - ALL DEFECTS CORRECTED</div>
+            <div className="row">
+              <div className="field"><span className="label">Certified By:</span> {inspection.mechanic_certified_by || 'N/A'}</div>
+              <div className="field"><span className="label">Certification Date/Time:</span> {inspection.mechanic_certified_datetime ? formatInTimeZone(new Date(inspection.mechanic_certified_datetime), "America/New_York", "MM/dd/yyyy h:mm a") + ' ET' : 'N/A'}</div>
+            </div>
+            {inspection.mechanic_notes && (
+              <div className="field" style={{ marginTop: '10px' }}>
+                <span className="label">Repair Synopsis:</span>
+                <div style={{ marginTop: '5px', whiteSpace: 'pre-wrap' }}>{inspection.mechanic_notes}</div>
+              </div>
+            )}
+          </div>
+        )}
 
         <div className="section">
           <div className="section-title">CERTIFICATION</div>
