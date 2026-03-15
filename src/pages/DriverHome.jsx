@@ -118,6 +118,13 @@ export default function DriverHome() {
           <LogOut className="w-4 h-4 mr-2" />
           Sign Out
         </Button>
+
+        {/* Branding */}
+        <div className="text-center pb-4">
+          <p className="text-[10px] text-blue-300/60">
+            Powered By: <span className="font-semibold">Base44</span> • Designed By: <span className="font-semibold">Clifton M Warner</span>
+          </p>
+        </div>
       </div>
     </div>
   );

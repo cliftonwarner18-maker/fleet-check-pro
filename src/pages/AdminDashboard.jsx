@@ -222,6 +222,13 @@ export default function AdminDashboard() {
             ))}
           </div>
         )}
+
+        {/* Branding */}
+        <div className="text-center py-6">
+          <p className="text-[10px] text-slate-400">
+            Powered By: <span className="font-semibold">Base44</span> • Designed By: <span className="font-semibold">Clifton M Warner</span>
+          </p>
+        </div>
       </div>
 
       <InspectionDetailModal

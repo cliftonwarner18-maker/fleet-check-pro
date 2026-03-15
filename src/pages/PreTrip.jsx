@@ -285,9 +285,14 @@ export default function PreTrip() {
           </Button>
         </div>
 
-        <p className="text-center text-xs text-slate-400 pb-6">
-          FleetCheck Pro • New Hanover County Schools • Wilmington, NC
-        </p>
+        <div className="text-center space-y-1 pb-6">
+          <p className="text-xs text-slate-400">
+            FleetCheck Pro • New Hanover County Schools • Wilmington, NC
+          </p>
+          <p className="text-[10px] text-slate-300">
+            Powered By: <span className="font-semibold">Base44</span> • Designed By: <span className="font-semibold">Clifton M Warner</span>
+          </p>
+        </div>
       </div>
     </div>
   );
