@@ -14,7 +14,7 @@ import NCHeader from "@/components/inspection/NCHeader";
 import SafetyDisclosure from "@/components/inspection/SafetyDisclosure";
 import FuelGauge from "@/components/inspection/FuelGauge";
 import ChecklistGrid from "@/components/inspection/ChecklistGrid";
-import { formatInTimeZone } from "date-fns-tz";
+import { formatInTimeZone, toDate } from "date-fns-tz";
 
 export default function PreTrip() {
   const navigate = useNavigate();
@@ -121,11 +121,11 @@ export default function PreTrip() {
     
     let inspectionDateTime = null;
     if (inspectionDate && inspectionTime) {
-      const etDateTime = `${inspectionDate}T${inspectionTime}:00-05:00`;
-      inspectionDateTime = new Date(etDateTime).toISOString();
+      const etDateTimeString = `${inspectionDate} ${inspectionTime}:00`;
+      inspectionDateTime = toDate(etDateTimeString, { timeZone: "America/New_York" }).toISOString();
     } else if (inspectionDate) {
-      const etDateTime = `${inspectionDate}T00:00:00-05:00`;
-      inspectionDateTime = new Date(etDateTime).toISOString();
+      const etDateTimeString = `${inspectionDate} 00:00:00`;
+      inspectionDateTime = toDate(etDateTimeString, { timeZone: "America/New_York" }).toISOString();
     }
     
     const inspectionData = {
