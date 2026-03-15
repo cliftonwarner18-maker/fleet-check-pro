@@ -130,7 +130,7 @@ export default function AdminDashboard() {
               >
                 <Settings className="w-4 h-4 mr-2" /> Fleet Management
               </Button>
-              <TD28DExport inspections={todayInspections} />
+              <TD28DExport inspections={filtered} date={selectedDate ? format(selectedDate, "MM/dd/yyyy") : format(new Date(), "MM/dd/yyyy")} />
             </div>
           </div>
         </div>
