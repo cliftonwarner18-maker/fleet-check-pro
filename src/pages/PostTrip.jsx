@@ -180,8 +180,8 @@ export default function PostTrip() {
         status: "completed",
         is_locked: true,
         pre_trip_id: preTripId,
-        created_date: preTrip.created_date,
-        ...(customTimestamp && { updated_date: customTimestamp }),
+        inspection_datetime: preTrip.inspection_datetime,
+        submitted_at: new Date().toISOString(),
       });
       
       // Delete the original pre-trip record
@@ -209,7 +209,8 @@ export default function PostTrip() {
         repair_still_needed: repairStillNeeded,
         status: "completed",
         is_locked: false,
-        ...(customTimestamp && { created_date: customTimestamp }),
+        inspection_datetime: customTimestamp,
+        submitted_at: new Date().toISOString(),
       });
       toast.success("Post-Trip inspection submitted successfully!");
     }
