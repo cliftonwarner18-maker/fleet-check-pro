@@ -2,6 +2,7 @@ import React, { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { FileText } from "lucide-react";
 import { format } from "date-fns";
+import { formatInTimeZone } from "date-fns-tz";
 import { DEFECT_LABEL_MAP } from "@/components/inspection/ChecklistData";
 
 export default function BusHistoryExport({ busNumber, inspections }) {
@@ -106,7 +107,7 @@ export default function BusHistoryExport({ busNumber, inspections }) {
           <h1>═══ DEFECTS HISTORICAL REPORT ═══</h1>
           <p>BUS #{busNumber}</p>
           <p>New Hanover County Schools</p>
-          <p>Generated: {format(new Date(), "PPP 'at' p")}</p>
+          <p>Generated: {formatInTimeZone(new Date(), "America/New_York", "PPP 'at' p")}</p>
         </div>
 
         {busInspections.length === 0 ? (
@@ -120,7 +121,7 @@ export default function BusHistoryExport({ busNumber, inspections }) {
             <div key={inspection.id} className="record">
               <div className="record-header">
                 <span>RECORD #{idx + 1}</span>
-                <span>{format(new Date(inspection.created_date), "MM/dd/yyyy HH:mm")}</span>
+                <span>{formatInTimeZone(new Date(inspection.created_date), "America/New_York", "MM/dd/yyyy HH:mm")}</span>
               </div>
               
               <div className="field">

@@ -2,6 +2,7 @@ import React, { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { FileText } from "lucide-react";
 import { format } from "date-fns";
+import { formatInTimeZone } from "date-fns-tz";
 import { DEFECT_LABEL_MAP, EC_ITEMS } from "@/components/inspection/ChecklistData";
 
 export default function InspectionPDFExport({ inspection }) {
@@ -206,7 +207,7 @@ export default function InspectionPDFExport({ inspection }) {
           </div>
           <div className="info-row">
             <strong>Date/Time:</strong>
-            <span>{format(new Date(inspection.created_date), "MM/dd/yyyy  •  hh:mm a")}</span>
+            <span>{formatInTimeZone(new Date(inspection.created_date), "America/New_York", "MM/dd/yyyy  •  hh:mm a")}</span>
           </div>
           <div className="info-row">
             <strong>Bus #:</strong>

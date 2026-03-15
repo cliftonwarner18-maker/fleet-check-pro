@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { FileText } from "lucide-react";
 import { DEFECT_LABEL_MAP } from "@/components/inspection/ChecklistData";
 import { format } from "date-fns";
+import { formatInTimeZone } from "date-fns-tz";
 
 export default function CombinedInspectionPDF({ inspection }) {
   const contentRef = useRef();
@@ -123,7 +124,7 @@ export default function CombinedInspectionPDF({ inspection }) {
           <div className="section-title">VEHICLE & DRIVER INFORMATION</div>
           <div className="row">
             <div className="field"><span className="label">Driver:</span> {inspection.driver_name}</div>
-            <div className="field"><span className="label">Date:</span> {format(new Date(inspection.created_date), 'MM/dd/yyyy')}</div>
+            <div className="field"><span className="label">Date:</span> {formatInTimeZone(new Date(inspection.created_date), 'America/New_York', 'MM/dd/yyyy')}</div>
           </div>
           <div className="row">
             <div className="field"><span className="label">Bus Number:</span> {inspection.bus_number}</div>
@@ -235,7 +236,7 @@ export default function CombinedInspectionPDF({ inspection }) {
 
         <div className="footer">
           <p>This is a legal document. Retain for required recordkeeping period.</p>
-          <p>Generated: {format(new Date(), 'MM/dd/yyyy HH:mm')}</p>
+          <p>Generated: {formatInTimeZone(new Date(), 'America/New_York', 'MM/dd/yyyy HH:mm')}</p>
         </div>
       </div>
     </>
