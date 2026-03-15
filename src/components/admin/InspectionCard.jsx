@@ -23,9 +23,18 @@ export default function InspectionCard({ inspection, onView, onUpdateStatus, onE
   return (
     <div className="bg-white rounded-xl border border-slate-200 hover:shadow-md transition-shadow overflow-hidden">
       {needsRepairs && (
-        <div className="bg-red-600 text-white px-4 py-2 text-sm font-bold flex items-center gap-2">
-          <Wrench className="w-4 h-4" />
-          REPAIRS NEEDED - Awaiting Mechanic Certification
+        <div className="bg-red-600 text-white px-4 py-2 text-sm font-bold flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Wrench className="w-4 h-4" />
+            REPAIRS NEEDED - Awaiting Mechanic Certification
+          </div>
+          <Button 
+            onClick={() => onView(inspection)}
+            size="sm"
+            className="bg-white text-red-600 hover:bg-slate-100 font-bold"
+          >
+            Mechanic Form
+          </Button>
         </div>
       )}
       <div className="p-5">
