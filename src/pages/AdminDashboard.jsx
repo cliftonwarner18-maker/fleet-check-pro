@@ -27,7 +27,7 @@ import {
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
-  const [statusFilter, setStatusFilter] = useState("pending");
+  const [statusFilter, setStatusFilter] = useState("all");
   const [typeFilter, setTypeFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedInspection, setSelectedInspection] = useState(null);
