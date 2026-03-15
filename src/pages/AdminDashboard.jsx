@@ -30,6 +30,7 @@ export default function AdminDashboard() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [typeFilter, setTypeFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [dateFilter, setDateFilter] = useState("today");
   const [selectedInspection, setSelectedInspection] = useState(null);
   const [editingInspection, setEditingInspection] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
@@ -74,7 +75,18 @@ export default function AdminDashboard() {
     const matchSearch = !searchQuery ||
       insp.bus_number?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       insp.driver_name?.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchStatus && matchType && matchSearch;
+    
+    let matchDate = true;
+    if (dateFilter === "today") {
+      matchDate = format(new Date(insp.created_date), "yyyy-MM-dd") === format(new Date(), "yyyy-MM-dd");
+    } else if (dateFilter === "week") {
+      const weekAgo = new Date();
+      weekAgo.setDate(weekAgo.getDate() - 7);
+      matchDate = new Date(insp.created_date) >= weekAgo;
+    }
+    // "all" = no date filter
+    
+    return matchStatus && matchType && matchSearch && matchDate;
   });
 
   const pendingCount = inspections.filter(i => i.status === "pending_post_trip").length;
@@ -198,6 +210,16 @@ export default function AdminDashboard() {
                 <SelectItem value="pre_trip">Pre-Trip</SelectItem>
                 <SelectItem value="post_trip">Post-Trip</SelectItem>
                 <SelectItem value="combined">Combined Daily</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={dateFilter} onValueChange={setDateFilter}>
+              <SelectTrigger className="w-40 h-10 rounded-xl">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="today">Today Only</SelectItem>
+                <SelectItem value="week">Past Week</SelectItem>
+                <SelectItem value="all">All Dates</SelectItem>
               </SelectContent>
             </Select>
           </div>

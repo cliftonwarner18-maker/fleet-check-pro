@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
+import { formatInTimeZone } from "date-fns-tz";
 import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
@@ -45,7 +46,7 @@ export default function InspectionDetailModal({ inspection, open, onClose }) {
             </div>
             <div>
               <p className="text-slate-500">Date/Time</p>
-              <p className="font-semibold">{format(new Date(inspection.created_date), "MMM d, yyyy h:mm a")}</p>
+              <p className="font-semibold">{formatInTimeZone(new Date(inspection.created_date), 'America/New_York', 'MMM d, yyyy h:mm a')}</p>
             </div>
             <div>
               <p className="text-slate-500">Route(s)</p>
