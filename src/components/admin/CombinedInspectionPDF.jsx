@@ -194,11 +194,11 @@ export default function CombinedInspectionPDF({ inspection }) {
             <div className="field"><span className="label">Students Transported:</span> {inspection.num_transported || 'N/A'}</div>
             <div className="field"><span className="label">Total Hours:</span> {(() => {
               const created = new Date(inspection.created_date);
-              const updated = new Date(inspection.updated_date);
+              const updated = new Date(inspection.updated_date || inspection.created_date);
               const diffMs = updated - created;
               const hours = Math.floor(diffMs / (1000 * 60 * 60));
               const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-              return `${hours}h ${minutes}m`;
+              return diffMs > 0 ? `${hours}h ${minutes}m` : 'N/A';
             })()}</div>
           </div>
           <div className="row">
@@ -237,11 +237,11 @@ export default function CombinedInspectionPDF({ inspection }) {
             <div className="field"><span className="label">Total Miles Driven:</span> {inspection.odometer_start && inspection.odometer_end ? (parseFloat(inspection.odometer_end) - parseFloat(inspection.odometer_start)).toFixed(1) : 'N/A'} miles</div>
             <div className="field"><span className="label">Total Hours:</span> {(() => {
               const created = new Date(inspection.created_date);
-              const updated = new Date(inspection.updated_date);
+              const updated = new Date(inspection.updated_date || inspection.created_date);
               const diffMs = updated - created;
               const hours = Math.floor(diffMs / (1000 * 60 * 60));
               const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-              return `${hours}h ${minutes}m`;
+              return diffMs > 0 ? `${hours}h ${minutes}m` : 'N/A';
             })()}</div>
           </div>
           <div className="field" style={{ marginTop: '8px' }}>

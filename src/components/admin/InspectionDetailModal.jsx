@@ -83,7 +83,7 @@ export default function InspectionDetailModal({ inspection, open, onClose }) {
                   const diffMs = updated - created;
                   const hours = Math.floor(diffMs / (1000 * 60 * 60));
                   const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-                  return `${hours}h ${minutes}m`;
+                  return diffMs > 0 ? `${hours}h ${minutes}m` : 'N/A';
                 })()}</p>
               </div>
             )}

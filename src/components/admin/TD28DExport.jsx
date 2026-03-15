@@ -72,16 +72,23 @@ export default function TD28DExport({ inspections, date }) {
               const insp = inspections.find(i => i.bus_number === bus.bus_number);
               if (insp) {
                 const allDefects = [...(insp.defects || []), ...(insp.air_brake_checks || [])];
-                const remarks = allDefects.length > 0
+                const defectLabels = allDefects.length > 0
                   ? allDefects.map(d => DEFECT_LABEL_MAP[d] || d).join(", ")
-                  : insp.concerns || "";
+                  : "";
+                const allRemarks = [
+                  defectLabels,
+                  insp.concerns || "",
+                  insp.post_trip_concerns || "",
+                  insp.post_trip_remarks || ""
+                ].filter(Boolean).join(" | ");
+                
                 return (
                   <tr key={bus.id}>
                     <td>{insp.bus_number}</td>
                     <td>{formatInTimeZone(new Date(insp.created_date), "America/New_York", "h:mm a")}</td>
                     <td className="ok-cell">{insp.is_satisfactory ? "✓" : ""}</td>
                     <td>{insp.num_transported || ""}</td>
-                    <td>{remarks}</td>
+                    <td>{allRemarks}</td>
                     <td>{insp.driver_name}</td>
                   </tr>
                 );
