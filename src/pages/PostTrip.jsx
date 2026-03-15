@@ -180,7 +180,7 @@ export default function PostTrip() {
         status: "completed",
         is_locked: true,
         pre_trip_id: preTripId,
-        inspection_datetime: preTrip.inspection_datetime,
+        inspection_datetime: preTrip.inspection_datetime || preTrip.submitted_at || preTrip.created_date,
         submitted_at: new Date().toISOString(),
       });
       
