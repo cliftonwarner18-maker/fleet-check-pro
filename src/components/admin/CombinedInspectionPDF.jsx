@@ -203,6 +203,10 @@ export default function CombinedInspectionPDF({ inspection }) {
             })()}</div>
           </div>
           <div className="row">
+            <div className="field"><span className="label">DEBUG Pre-Trip Time:</span> {format(new Date(inspection.inspection_datetime || inspection.submitted_at || inspection.created_date), 'MM/dd/yyyy hh:mm:ss a')}</div>
+            <div className="field"><span className="label">DEBUG Post-Trip Time:</span> {format(new Date(inspection.post_trip_datetime || inspection.submitted_at || inspection.created_date), 'MM/dd/yyyy hh:mm:ss a')}</div>
+          </div>
+          <div className="row">
             <div className="field"><span className="label">Fuel End:</span> {inspection.end_fuel_level || 'N/A'}</div>
             <div className="field"><span className="label">DEF End:</span> {inspection.end_def_level || 'N/A'}</div>
           </div>
@@ -245,6 +249,10 @@ export default function CombinedInspectionPDF({ inspection }) {
               const minutes = totalMinutes % 60;
               return diffMs > 0 ? `${hours}h ${minutes}m` : 'N/A';
             })()}</div>
+          </div>
+          <div className="row">
+            <div className="field"><span className="label">DEBUG Pre-Trip Time:</span> {format(new Date(inspection.inspection_datetime || inspection.submitted_at || inspection.created_date), 'MM/dd/yyyy hh:mm:ss a')}</div>
+            <div className="field"><span className="label">DEBUG Post-Trip Time:</span> {format(new Date(inspection.post_trip_datetime || inspection.submitted_at || inspection.created_date), 'MM/dd/yyyy hh:mm:ss a')}</div>
           </div>
           <div className="field" style={{ marginTop: '8px' }}>
             <span className="label">Status:</span> {inspection.is_satisfactory ? '✓ Bus is Safe and Satisfactory' : '⚠ Defects Documented'} • {inspection.no_students_left ? '✓ No Students Left on Bus' : '⚠ Student Check Incomplete'}
