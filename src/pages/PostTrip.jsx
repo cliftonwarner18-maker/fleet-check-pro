@@ -35,6 +35,8 @@ export default function PostTrip() {
   const [postRemarks, setPostRemarks] = useState("");
   const [numTransported, setNumTransported] = useState("");
   const [repairStillNeeded, setRepairStillNeeded] = useState(false);
+  const [inspectionDate, setInspectionDate] = useState(new Date().toISOString().split('T')[0]);
+  const [inspectionTime, setInspectionTime] = useState("");
 
   const { data: buses = [] } = useQuery({
     queryKey: ["buses"],
@@ -93,6 +95,11 @@ export default function PostTrip() {
       setPostRemarks(existingPostTrip.post_trip_remarks || "");
       setNumTransported(existingPostTrip.num_transported ? existingPostTrip.num_transported.toString() : "");
       setRepairStillNeeded(existingPostTrip.repair_still_needed || false);
+      if (existingPostTrip.updated_date) {
+        const date = new Date(existingPostTrip.updated_date);
+        setInspectionDate(date.toISOString().split('T')[0]);
+        setInspectionTime(date.toTimeString().slice(0, 5));
+      }
     }
   }, [existingPostTrip]);
 
@@ -116,6 +123,13 @@ export default function PostTrip() {
     }
     setSubmitting(true);
     
+    let customTimestamp = null;
+    if (inspectionDate && inspectionTime) {
+      customTimestamp = new Date(`${inspectionDate}T${inspectionTime}`).toISOString();
+    } else if (inspectionDate) {
+      customTimestamp = new Date(inspectionDate).toISOString();
+    }
+    
     if (isEditing && existingPostTrip) {
       // Update existing post-trip or combined inspection
       const updateData = {
@@ -132,6 +146,7 @@ export default function PostTrip() {
         no_students_left: noStudentsLeft,
         num_transported: numTransported ? parseInt(numTransported) : undefined,
         repair_still_needed: repairStillNeeded,
+        ...(customTimestamp && { updated_date: customTimestamp }),
       };
       await base44.entities.Inspection.update(postTripId, updateData);
       queryClient.invalidateQueries({ queryKey: ["inspections"] });
@@ -162,6 +177,8 @@ export default function PostTrip() {
         status: "completed",
         is_locked: true,
         pre_trip_id: preTripId,
+        created_date: preTrip.created_date,
+        ...(customTimestamp && { updated_date: customTimestamp }),
       });
       
       // Delete the original pre-trip record
@@ -189,6 +206,7 @@ export default function PostTrip() {
         repair_still_needed: repairStillNeeded,
         status: "completed",
         is_locked: false,
+        ...(customTimestamp && { created_date: customTimestamp }),
       });
       toast.success("Post-Trip inspection submitted successfully!");
     }
@@ -203,6 +221,45 @@ export default function PostTrip() {
         <NCHeader title="Post-Trip Inspection" subtitle="FleetCheck Pro • NC School / Activity Bus" />
         
         <SafetyDisclosure />
+
+        {/* Date & Time */}
+        <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 space-y-4">
+          <h2 className="text-sm font-bold text-slate-700 uppercase tracking-wide">Post-Trip Date & Time</h2>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-xs font-medium text-slate-600 mb-1 block">Date</label>
+              <Input
+                type="date"
+                value={inspectionDate}
+                onChange={(e) => setInspectionDate(e.target.value)}
+                className="h-12 rounded-xl"
+              />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-slate-600 mb-1 block">Time</label>
+              <div className="flex gap-2">
+                <Input
+                  type="time"
+                  value={inspectionTime}
+                  onChange={(e) => setInspectionTime(e.target.value)}
+                  className="h-12 rounded-xl flex-1"
+                />
+                <Button
+                  type="button"
+                  onClick={() => {
+                    const now = new Date();
+                    setInspectionDate(now.toISOString().split('T')[0]);
+                    setInspectionTime(now.toTimeString().slice(0, 5));
+                  }}
+                  variant="outline"
+                  className="h-12 rounded-xl px-4 whitespace-nowrap"
+                >
+                  Now
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
 
         {/* Bus Info */}
         <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 space-y-4">
