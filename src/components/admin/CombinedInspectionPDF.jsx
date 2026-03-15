@@ -236,7 +236,7 @@ export default function CombinedInspectionPDF({ inspection }) {
           </div>
         )}
 
-        <div className="section" style={{ background: '#f0fdf4', border: '2px solid #22c55e' }}>
+        <div className="section" style={{ background: (inspection.is_satisfactory || inspection.mechanic_certified) ? '#f0fdf4' : '#fef2f2', border: (inspection.is_satisfactory || inspection.mechanic_certified) ? '2px solid #22c55e' : '2px solid #dc2626' }}>
           <div className="section-title">DAILY INSPECTION SUMMARY</div>
           <div className="row">
             <div className="field"><span className="label">Total Miles Driven:</span> {inspection.odometer_start && inspection.odometer_end ? (parseFloat(inspection.odometer_end) - parseFloat(inspection.odometer_start)).toFixed(1) : 'N/A'} miles</div>
@@ -256,6 +256,13 @@ export default function CombinedInspectionPDF({ inspection }) {
           </div>
           <div className="field" style={{ marginTop: '8px' }}>
             <span className="label">Status:</span> {inspection.is_satisfactory ? '✓ Bus is Safe and Satisfactory' : '⚠ Defects Documented'} • {inspection.no_students_left ? '✓ No Students Left on Bus' : '⚠ Student Check Incomplete'}
+          </div>
+          <div className="field" style={{ marginTop: '12px', fontSize: '13px', fontWeight: 'bold', paddingTop: '8px', borderTop: '1px solid ' + (inspection.is_satisfactory || inspection.mechanic_certified ? '#22c55e' : '#dc2626') }}>
+            {(inspection.is_satisfactory || inspection.mechanic_certified) ? (
+              <span style={{ color: '#16a34a' }}>✓ BUS CLEARED FOR NEXT ROUTE</span>
+            ) : (
+              <span style={{ color: '#dc2626' }}>✗ BUS NOT CLEARED FOR NEXT ROUTE — DEFECTS PRESENT — AWAITING MECHANIC INSPECTION & CERTIFICATION</span>
+            )}
           </div>
         </div>
 
