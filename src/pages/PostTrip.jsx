@@ -181,6 +181,7 @@ export default function PostTrip() {
         is_locked: true,
         pre_trip_id: preTripId,
         inspection_datetime: preTrip.inspection_datetime || preTrip.submitted_at || preTrip.created_date,
+        post_trip_datetime: customTimestamp || new Date().toISOString(),
         submitted_at: new Date().toISOString(),
       });
       
