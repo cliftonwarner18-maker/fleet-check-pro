@@ -33,6 +33,8 @@ export default function PreTrip() {
   const [defects, setDefects] = useState([]);
   const [airBrakeChecks, setAirBrakeChecks] = useState([]);
   const [concerns, setConcerns] = useState("");
+  const [inspectionDate, setInspectionDate] = useState(new Date().toISOString().split('T')[0]);
+  const [inspectionTime, setInspectionTime] = useState("");
 
   const { data: buses = [] } = useQuery({
     queryKey: ["buses"],
@@ -62,6 +64,11 @@ export default function PreTrip() {
       setDefects(existingInspection.defects || []);
       setAirBrakeChecks(existingInspection.air_brake_checks || []);
       setConcerns(existingInspection.concerns || "");
+      if (existingInspection.created_date) {
+        const date = new Date(existingInspection.created_date);
+        setInspectionDate(date.toISOString().split('T')[0]);
+        setInspectionTime(date.toTimeString().slice(0, 5));
+      }
     }
   }, [existingInspection]);
 
@@ -110,6 +117,14 @@ export default function PreTrip() {
       return;
     }
     setSubmitting(true);
+    
+    let customTimestamp = null;
+    if (inspectionDate && inspectionTime) {
+      customTimestamp = new Date(`${inspectionDate}T${inspectionTime}`).toISOString();
+    } else if (inspectionDate) {
+      customTimestamp = new Date(inspectionDate).toISOString();
+    }
+    
     const inspectionData = {
       driver_name: driverName,
       bus_number: busNumber,
@@ -125,6 +140,7 @@ export default function PreTrip() {
       odometer_start: odometerStart,
       status: "pending_post_trip",
       is_locked: false,
+      ...(customTimestamp && { created_date: customTimestamp }),
     };
 
     if (isEditing) {
@@ -144,6 +160,45 @@ export default function PreTrip() {
         <NCHeader title="Pre-Trip Inspection" subtitle="FleetCheck Pro • NC School / Activity Bus" />
         
         <SafetyDisclosure />
+
+        {/* Date & Time */}
+        <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 space-y-4">
+          <h2 className="text-sm font-bold text-slate-700 uppercase tracking-wide">Inspection Date & Time</h2>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-xs font-medium text-slate-600 mb-1 block">Date</label>
+              <Input
+                type="date"
+                value={inspectionDate}
+                onChange={(e) => setInspectionDate(e.target.value)}
+                className="h-12 rounded-xl"
+              />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-slate-600 mb-1 block">Time</label>
+              <div className="flex gap-2">
+                <Input
+                  type="time"
+                  value={inspectionTime}
+                  onChange={(e) => setInspectionTime(e.target.value)}
+                  className="h-12 rounded-xl flex-1"
+                />
+                <Button
+                  type="button"
+                  onClick={() => {
+                    const now = new Date();
+                    setInspectionDate(now.toISOString().split('T')[0]);
+                    setInspectionTime(now.toTimeString().slice(0, 5));
+                  }}
+                  variant="outline"
+                  className="h-12 rounded-xl px-4 whitespace-nowrap"
+                >
+                  Now
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
 
         {/* Bus Info */}
         <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 space-y-4">
