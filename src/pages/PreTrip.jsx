@@ -64,8 +64,8 @@ export default function PreTrip() {
       setDefects(existingInspection.defects || []);
       setAirBrakeChecks(existingInspection.air_brake_checks || []);
       setConcerns(existingInspection.concerns || "");
-      if (existingInspection.created_date) {
-        const date = new Date(existingInspection.created_date);
+      if (existingInspection.inspection_datetime) {
+        const date = new Date(existingInspection.inspection_datetime);
         setInspectionDate(date.toISOString().split('T')[0]);
         setInspectionTime(date.toTimeString().slice(0, 5));
       }
@@ -118,13 +118,13 @@ export default function PreTrip() {
     }
     setSubmitting(true);
     
-    let customTimestamp = null;
+    let inspectionDateTime = null;
     if (inspectionDate && inspectionTime) {
       const etDateTime = `${inspectionDate}T${inspectionTime}:00-05:00`;
-      customTimestamp = new Date(etDateTime).toISOString();
+      inspectionDateTime = new Date(etDateTime).toISOString();
     } else if (inspectionDate) {
       const etDateTime = `${inspectionDate}T00:00:00-05:00`;
-      customTimestamp = new Date(etDateTime).toISOString();
+      inspectionDateTime = new Date(etDateTime).toISOString();
     }
     
     const inspectionData = {
@@ -142,7 +142,8 @@ export default function PreTrip() {
       odometer_start: odometerStart,
       status: "pending_post_trip",
       is_locked: false,
-      ...(customTimestamp && { created_date: customTimestamp }),
+      inspection_datetime: inspectionDateTime,
+      submitted_at: new Date().toISOString(),
     };
 
     if (isEditing) {
