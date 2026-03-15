@@ -193,9 +193,9 @@ export default function CombinedInspectionPDF({ inspection }) {
           <div className="row">
             <div className="field"><span className="label">Students Transported:</span> {inspection.num_transported || 'N/A'}</div>
             <div className="field"><span className="label">Total Hours:</span> {(() => {
-              const created = new Date(inspection.created_date);
-              const updated = new Date(inspection.updated_date || inspection.created_date);
-              const diffMs = updated - created;
+              const preTrip = new Date(inspection.inspection_datetime || inspection.created_date);
+              const postTrip = new Date(inspection.updated_date || inspection.created_date);
+              const diffMs = postTrip - preTrip;
               const hours = Math.floor(diffMs / (1000 * 60 * 60));
               const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
               return diffMs > 0 ? `${hours}h ${minutes}m` : 'N/A';
@@ -236,9 +236,9 @@ export default function CombinedInspectionPDF({ inspection }) {
           <div className="row">
             <div className="field"><span className="label">Total Miles Driven:</span> {inspection.odometer_start && inspection.odometer_end ? (parseFloat(inspection.odometer_end) - parseFloat(inspection.odometer_start)).toFixed(1) : 'N/A'} miles</div>
             <div className="field"><span className="label">Total Hours:</span> {(() => {
-              const created = new Date(inspection.created_date);
-              const updated = new Date(inspection.updated_date || inspection.created_date);
-              const diffMs = updated - created;
+              const preTrip = new Date(inspection.inspection_datetime || inspection.created_date);
+              const postTrip = new Date(inspection.updated_date || inspection.created_date);
+              const diffMs = postTrip - preTrip;
               const hours = Math.floor(diffMs / (1000 * 60 * 60));
               const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
               return diffMs > 0 ? `${hours}h ${minutes}m` : 'N/A';
