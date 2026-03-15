@@ -1,5 +1,5 @@
 import React from "react";
-import { format } from "date-fns";
+import { formatInTimeZone } from "date-fns-tz";
 import { formatInTimeZone } from "date-fns-tz";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
