@@ -38,7 +38,7 @@ export default function DriverHome() {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white/10 mb-4">
             <Bus className="w-9 h-9 text-white" />
           </div>
-          <h1 className="text-2xl font-bold tracking-tight">NC Bus Inspection</h1>
+          <h1 className="text-2xl font-bold tracking-tight">FleetCheck Pro</h1>
           <p className="text-blue-200 text-sm mt-1">New Hanover County Schools</p>
           {user && (
             <p className="text-blue-300 text-xs mt-3 font-medium">

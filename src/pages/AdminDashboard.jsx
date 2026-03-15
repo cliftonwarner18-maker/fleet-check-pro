@@ -104,7 +104,7 @@ export default function AdminDashboard() {
               </div>
               <div>
                 <h1 className="text-xl font-bold text-slate-800">Admin Dashboard</h1>
-                <p className="text-slate-500 text-sm">NC Bus Inspection Management</p>
+                <p className="text-slate-500 text-sm">FleetCheck Pro • NHCS Transportation</p>
               </div>
             </div>
             <div className="flex gap-2">

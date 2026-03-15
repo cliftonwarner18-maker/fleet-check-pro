@@ -120,7 +120,7 @@ export default function FleetManagement() {
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-slate-800">Fleet Management</h1>
-                <p className="text-slate-500 text-sm">Manage your school bus fleet</p>
+                <p className="text-slate-500 text-sm">FleetCheck Pro • NHCS Transportation</p>
               </div>
             </div>
             <Dialog open={dialogOpen} onOpenChange={(open) => {
