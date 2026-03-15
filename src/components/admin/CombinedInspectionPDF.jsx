@@ -142,6 +142,10 @@ export default function CombinedInspectionPDF({ inspection }) {
             <div className="field"><span className="label">Odometer Start:</span> {inspection.odometer_start || 'N/A'}</div>
           </div>
           <div className="row">
+            <div className="field"><span className="label">Odometer End:</span> {inspection.odometer_end || 'N/A'}</div>
+            <div className="field"><span className="label">Total Miles:</span> {inspection.odometer_start && inspection.odometer_end ? (parseFloat(inspection.odometer_end) - parseFloat(inspection.odometer_start)).toFixed(1) : 'N/A'}</div>
+          </div>
+          <div className="row">
             <div className="field"><span className="label">Fuel Start:</span> {inspection.start_fuel_level || 'N/A'}</div>
             <div className="field"><span className="label">DEF Start:</span> {inspection.start_def_level || 'N/A'}</div>
           </div>
@@ -188,7 +192,14 @@ export default function CombinedInspectionPDF({ inspection }) {
           <div className="section-title">POST-TRIP INSPECTION</div>
           <div className="row">
             <div className="field"><span className="label">Students Transported:</span> {inspection.num_transported || 'N/A'}</div>
-            <div className="field"><span className="label">Odometer End:</span> {inspection.odometer_end || 'N/A'}</div>
+            <div className="field"><span className="label">Total Hours:</span> {(() => {
+              const created = new Date(inspection.created_date);
+              const updated = new Date(inspection.updated_date);
+              const diffMs = updated - created;
+              const hours = Math.floor(diffMs / (1000 * 60 * 60));
+              const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+              return `${hours}h ${minutes}m`;
+            })()}</div>
           </div>
           <div className="row">
             <div className="field"><span className="label">Fuel End:</span> {inspection.end_fuel_level || 'N/A'}</div>
