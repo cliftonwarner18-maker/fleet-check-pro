@@ -3,9 +3,15 @@ import { Button } from "@/components/ui/button";
 import { FileDown } from "lucide-react";
 import { format } from "date-fns";
 import { DEFECT_LABEL_MAP } from "@/components/inspection/ChecklistData";
+import { base44 } from "@/api/base44Client";
 
 export default function TD28DExport({ inspections, date }) {
   const printRef = useRef();
+  const [buses, setBuses] = React.useState([]);
+
+  React.useEffect(() => {
+    base44.entities.Bus.filter({ is_active: true }, "bus_number").then(setBuses);
+  }, []);
 
   const handlePrint = () => {
     const content = printRef.current;
@@ -61,24 +67,38 @@ export default function TD28DExport({ inspections, date }) {
             </tr>
           </thead>
           <tbody>
-            {inspections.map((insp) => {
-              const allDefects = [...(insp.defects || []), ...(insp.air_brake_checks || [])];
-              const remarks = allDefects.length > 0
-                ? allDefects.map(d => DEFECT_LABEL_MAP[d] || d).join(", ")
-                : insp.concerns || "";
-              return (
-                <tr key={insp.id}>
-                  <td>{insp.bus_number}</td>
-                  <td>{format(new Date(insp.created_date), "h:mm a")}</td>
-                  <td className="ok-cell">{insp.is_satisfactory ? "✓" : ""}</td>
-                  <td>{insp.num_transported || ""}</td>
-                  <td>{remarks}</td>
-                  <td>{insp.driver_name}</td>
-                </tr>
-              );
+            {buses.map((bus) => {
+              const insp = inspections.find(i => i.bus_number === bus.bus_number);
+              if (insp) {
+                const allDefects = [...(insp.defects || []), ...(insp.air_brake_checks || [])];
+                const remarks = allDefects.length > 0
+                  ? allDefects.map(d => DEFECT_LABEL_MAP[d] || d).join(", ")
+                  : insp.concerns || "";
+                return (
+                  <tr key={bus.id}>
+                    <td>{insp.bus_number}</td>
+                    <td>{format(new Date(insp.created_date), "h:mm a")}</td>
+                    <td className="ok-cell">{insp.is_satisfactory ? "✓" : ""}</td>
+                    <td>{insp.num_transported || ""}</td>
+                    <td>{remarks}</td>
+                    <td>{insp.driver_name}</td>
+                  </tr>
+                );
+              } else {
+                return (
+                  <tr key={bus.id}>
+                    <td>{bus.bus_number}</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                  </tr>
+                );
+              }
             })}
-            {/* Fill empty rows */}
-            {Array.from({ length: Math.max(0, 20 - inspections.length) }).map((_, i) => (
+            {/* Fill additional empty rows if needed */}
+            {Array.from({ length: Math.max(0, 20 - buses.length) }).map((_, i) => (
               <tr key={`empty-${i}`}>
                 <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
               </tr>
