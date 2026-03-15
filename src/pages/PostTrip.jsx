@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
-import { CheckCircle2, Send, Loader2, UserCheck } from "lucide-react";
+import { CheckCircle2, Send, Loader2, UserCheck, Wrench } from "lucide-react";
 import { cn } from "@/lib/utils";
 import NCHeader from "@/components/inspection/NCHeader";
 import SafetyDisclosure from "@/components/inspection/SafetyDisclosure";
@@ -361,6 +361,23 @@ export default function PostTrip() {
             <p className="text-xs text-slate-500 mt-0.5">No end-of-day issues to report</p>
           </div>
         </button>
+
+        {/* Bus Status Warning - Defects Require Mechanic Certification */}
+        {preTrip && !preTrip.is_satisfactory && !preTrip.mechanic_certified && (
+          <div className="bg-red-50 border-2 border-red-400 rounded-2xl p-5">
+            <div className="flex items-start gap-3">
+              <div className="w-12 h-12 rounded-xl bg-red-600 flex items-center justify-center flex-shrink-0">
+                <Wrench className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <p className="font-bold text-red-800">Bus NOT Cleared for Service</p>
+                <p className="text-sm text-red-700 mt-1">
+                  Pre-Trip defects have been documented. The bus cannot return to service until a mechanic inspects and certifies all defects are fixed.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Still Needs Repair (only show if linked to pre-trip with defects) */}
         {preTrip && !preTrip.is_satisfactory && (
