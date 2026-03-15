@@ -497,14 +497,14 @@ export default function InspectionPDFExport({ inspection }) {
 
           {/* Combined Inspection Safety Summary */}
           {inspection.inspection_type === "combined" && (
-          <div style={{ marginTop: "15px", padding: "12px", border: inspection.is_satisfactory && inspection.mechanic_certified ? "2px solid #22c55e" : "2px solid #dc2626", background: inspection.is_satisfactory && inspection.mechanic_certified ? "#f0fdf4" : "#fef2f2", borderRadius: "4px", fontSize: "10px" }}>
+          <div style={{ marginTop: "15px", padding: "12px", border: inspection.is_satisfactory || inspection.mechanic_certified ? "2px solid #22c55e" : "2px solid #dc2626", background: inspection.is_satisfactory || inspection.mechanic_certified ? "#f0fdf4" : "#fef2f2", borderRadius: "4px", fontSize: "10px" }}>
             <strong style={{ display: "block", marginBottom: "6px", fontSize: "11px" }}>DAILY INSPECTION SUMMARY:</strong>
             <div style={{ lineHeight: "1.6" }}>
               ✓ Pre-Trip: {inspection.is_satisfactory ? "Bus is Safe and Satisfactory" : "Defects Documented"}<br/>
               ✓ Post-Trip: {inspection.is_satisfactory ? "No End-of-Day Issues Reported" : "Condition Issues Noted"}<br/>
               ✓ Student Safety: No Students Left on Bus<br/>
-              <strong style={{ display: "block", marginTop: "6px", color: inspection.is_satisfactory && inspection.mechanic_certified ? "#16a34a" : "#dc2626" }}>
-                {inspection.is_satisfactory && inspection.mechanic_certified ? "✓ Bus Cleared for Next Route" : "✗ NEEDS ATTENTION OF REPAIR & SAFETY STAFF — NOT CLEARED FOR SERVICE"}
+              <strong style={{ display: "block", marginTop: "6px", color: inspection.is_satisfactory || inspection.mechanic_certified ? "#16a34a" : "#dc2626" }}>
+                {inspection.is_satisfactory || inspection.mechanic_certified ? "✓ Bus Cleared for Next Route" : "✗ NEEDS ATTENTION OF REPAIR & SAFETY STAFF — NOT CLEARED FOR SERVICE"}
               </strong>
             </div>
           </div>
