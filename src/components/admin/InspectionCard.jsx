@@ -31,7 +31,7 @@ export default function InspectionCard({ inspection, onView, onUpdateStatus, onE
             </Badge>
           </div>
           <p className="text-slate-500 text-sm mt-1">
-            {inspection.driver_name} • {formatInTimeZone(new Date(inspection.inspection_datetime || inspection.created_date), "America/New_York", "MMM d, yyyy • h:mm a")} ET
+            {inspection.driver_name} • {formatInTimeZone(new Date(inspection.inspection_datetime || inspection.submitted_at), "America/New_York", "MMM d, yyyy • h:mm a")} ET
           </p>
         </div>
         <Badge variant="outline" className="text-xs">
