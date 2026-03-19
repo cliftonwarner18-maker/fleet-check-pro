@@ -142,6 +142,7 @@ export default function InspectionPDFExport({ inspection }) {
   ${concernsSection}
   ${postTripSection}
   ${adminNotesSection}
+  ${mechCertSection}
 
   <div style="margin:10px 0;padding:10px;border:2px solid #000;background:#f9f9f9;font-size:9px;line-height:1.3;">
     <strong style="font-size:10px;text-transform:uppercase;">Commercial Vehicle Safety Disclosure</strong><br/>
