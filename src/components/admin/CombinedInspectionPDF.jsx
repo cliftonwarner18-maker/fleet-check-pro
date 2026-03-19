@@ -99,6 +99,10 @@ export default function CombinedInspectionPDF({ inspection }) {
       <div><strong>Total Miles:</strong> ${totalMiles}</div>
     </div>
     <div style="display:flex;justify-content:space-between;margin:4px 0;">
+      <div><strong>Pre-Trip Start Time:</strong> ${formatInTimeZone(preTime, "America/New_York", "MM/dd/yyyy h:mm a")} ET</div>
+      <div><strong>Post-Trip End Time:</strong> ${formatInTimeZone(postTime, "America/New_York", "MM/dd/yyyy h:mm a")} ET</div>
+    </div>
+    <div style="display:flex;justify-content:space-between;margin:4px 0;">
       <div><strong>Fuel End:</strong> ${inspection.end_fuel_level || "N/A"}</div>
       <div><strong>DEF End:</strong> ${inspection.end_def_level || "N/A"}</div>
     </div>
