@@ -71,33 +71,52 @@ export default function TD28DExport({ inspections, date }) {
             {buses.map((bus) => {
               const busInspections = inspections.filter(i => i.bus_number === bus.bus_number);
               if (busInspections.length > 0) {
-                return busInspections.map((insp, tripIdx) => {
-                  const allDefects = [...(insp.defects || []), ...(insp.air_brake_checks || [])];
-                  const defectLabels = allDefects.length > 0
-                    ? allDefects.map(d => DEFECT_LABEL_MAP[d] || d).join(", ")
-                    : "";
-                  const allRemarks = [
-                    defectLabels,
-                    insp.concerns || "",
-                    insp.post_trip_concerns || "",
-                    insp.post_trip_remarks || ""
-                  ].filter(Boolean).join(" | ");
-
-                  const arrivedTime = insp.post_trip_datetime
-                    ? formatInTimeZone(new Date(insp.post_trip_datetime), "America/New_York", "h:mm a")
-                    : "";
-
-                  return (
-                    <tr key={`${bus.id}-trip-${tripIdx}`}>
-                      <td>{tripIdx === 0 ? insp.bus_number : ""} {tripIdx > 0 ? `(Trip ${tripIdx + 1})` : ""}</td>
-                      <td>{arrivedTime} {arrivedTime && "ET"}</td>
-                      <td className="ok-cell">{insp.is_satisfactory ? "✓" : ""}</td>
-                      <td>{insp.num_transported || ""}</td>
-                      <td>{allRemarks}</td>
-                      <td>{insp.driver_name}</td>
-                    </tr>
-                  );
-                });
+                return (
+                  <tr key={bus.id}>
+                    <td style={{ verticalAlign: "top" }}>{bus.bus_number}</td>
+                    <td style={{ padding: 0 }}>
+                      <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                        {busInspections.map((insp, tripIdx) => {
+                          const arrivedTime = insp.post_trip_datetime
+                            ? formatInTimeZone(new Date(insp.post_trip_datetime), "America/New_York", "h:mm a") + " ET"
+                            : "";
+                          return <tr key={tripIdx}><td style={{ border: "none", borderBottom: tripIdx < busInspections.length - 1 ? "1px solid #ccc" : "none", padding: "6px 8px" }}>{arrivedTime}</td></tr>;
+                        })}
+                      </table>
+                    </td>
+                    <td style={{ padding: 0 }}>
+                      <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                        {busInspections.map((insp, tripIdx) => (
+                          <tr key={tripIdx}><td style={{ border: "none", borderBottom: tripIdx < busInspections.length - 1 ? "1px solid #ccc" : "none", padding: "6px 8px", textAlign: "center" }}>{insp.is_satisfactory ? "✓" : ""}</td></tr>
+                        ))}
+                      </table>
+                    </td>
+                    <td style={{ padding: 0 }}>
+                      <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                        {busInspections.map((insp, tripIdx) => (
+                          <tr key={tripIdx}><td style={{ border: "none", borderBottom: tripIdx < busInspections.length - 1 ? "1px solid #ccc" : "none", padding: "6px 8px" }}>{insp.num_transported || ""}</td></tr>
+                        ))}
+                      </table>
+                    </td>
+                    <td style={{ padding: 0 }}>
+                      <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                        {busInspections.map((insp, tripIdx) => {
+                          const allDefects = [...(insp.defects || []), ...(insp.air_brake_checks || [])];
+                          const defectLabels = allDefects.map(d => DEFECT_LABEL_MAP[d] || d).join(", ");
+                          const allRemarks = [defectLabels, insp.concerns || "", insp.post_trip_concerns || "", insp.post_trip_remarks || ""].filter(Boolean).join(" | ");
+                          return <tr key={tripIdx}><td style={{ border: "none", borderBottom: tripIdx < busInspections.length - 1 ? "1px solid #ccc" : "none", padding: "6px 8px" }}>{allRemarks}</td></tr>;
+                        })}
+                      </table>
+                    </td>
+                    <td style={{ padding: 0 }}>
+                      <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                        {busInspections.map((insp, tripIdx) => (
+                          <tr key={tripIdx}><td style={{ border: "none", borderBottom: tripIdx < busInspections.length - 1 ? "1px solid #ccc" : "none", padding: "6px 8px" }}>{insp.driver_name}</td></tr>
+                        ))}
+                      </table>
+                    </td>
+                  </tr>
+                );
               } else {
                 return (
                   <tr key={bus.id}>
