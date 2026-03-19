@@ -86,6 +86,19 @@ export default function InspectionPDFExport({ inspection }) {
         <p style="margin:0;font-size:9px;">${inspection.admin_notes}</p>
       </div>` : "";
 
+    const mechCertSection = inspection.mechanic_certified ? `
+      <div style="margin:10px 0;padding:10px;border:2px solid #22c55e;background:#f0fdf4;">
+        <div style="font-weight:bold;font-size:11px;border-bottom:1px solid #22c55e;padding-bottom:5px;margin-bottom:8px;">✓ MECHANIC CERTIFICATION — ALL DEFECTS CORRECTED</div>
+        <div style="display:flex;justify-content:space-between;margin:4px 0;font-size:10px;">
+          <div><strong>Certified By:</strong> ${inspection.mechanic_certified_by || "N/A"}</div>
+          <div><strong>Date/Time:</strong> ${inspection.mechanic_certified_datetime ? formatInTimeZone(new Date(inspection.mechanic_certified_datetime), "America/New_York", "MM/dd/yyyy h:mm a") + " ET" : "N/A"}</div>
+        </div>
+        ${inspection.mechanic_notes ? `<div style="margin-top:8px;font-size:10px;"><strong>Repair Synopsis:</strong><div style="margin-top:4px;white-space:pre-wrap;font-size:9px;">${inspection.mechanic_notes}</div></div>` : ""}
+        <div style="margin-top:10px;border-top:1px solid #22c55e;padding-top:8px;font-size:11px;font-weight:bold;color:#16a34a;">
+          ✓ BUS CLEARED FOR SERVICE
+        </div>
+      </div>` : "";
+
     const html = `<!DOCTYPE html>
 <html>
 <head>
