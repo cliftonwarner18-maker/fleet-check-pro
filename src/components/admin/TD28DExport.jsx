@@ -69,33 +69,35 @@ export default function TD28DExport({ inspections, date }) {
           </thead>
           <tbody>
             {buses.map((bus) => {
-              const insp = inspections.find(i => i.bus_number === bus.bus_number);
-              if (insp) {
-                const allDefects = [...(insp.defects || []), ...(insp.air_brake_checks || [])];
-                const defectLabels = allDefects.length > 0
-                  ? allDefects.map(d => DEFECT_LABEL_MAP[d] || d).join(", ")
-                  : "";
-                const allRemarks = [
-                  defectLabels,
-                  insp.concerns || "",
-                  insp.post_trip_concerns || "",
-                  insp.post_trip_remarks || ""
-                ].filter(Boolean).join(" | ");
-                
-                const arrivedTime = insp.post_trip_datetime 
-                  ? formatInTimeZone(new Date(insp.post_trip_datetime), "America/New_York", "h:mm a")
-                  : "";
-                
-                return (
-                  <tr key={bus.id}>
-                    <td>{insp.bus_number}</td>
-                    <td>{arrivedTime} {arrivedTime && "ET"}</td>
-                    <td className="ok-cell">{insp.is_satisfactory ? "✓" : ""}</td>
-                    <td>{insp.num_transported || ""}</td>
-                    <td>{allRemarks}</td>
-                    <td>{insp.driver_name}</td>
-                  </tr>
-                );
+              const busInspections = inspections.filter(i => i.bus_number === bus.bus_number);
+              if (busInspections.length > 0) {
+                return busInspections.map((insp, tripIdx) => {
+                  const allDefects = [...(insp.defects || []), ...(insp.air_brake_checks || [])];
+                  const defectLabels = allDefects.length > 0
+                    ? allDefects.map(d => DEFECT_LABEL_MAP[d] || d).join(", ")
+                    : "";
+                  const allRemarks = [
+                    defectLabels,
+                    insp.concerns || "",
+                    insp.post_trip_concerns || "",
+                    insp.post_trip_remarks || ""
+                  ].filter(Boolean).join(" | ");
+
+                  const arrivedTime = insp.post_trip_datetime
+                    ? formatInTimeZone(new Date(insp.post_trip_datetime), "America/New_York", "h:mm a")
+                    : "";
+
+                  return (
+                    <tr key={`${bus.id}-trip-${tripIdx}`}>
+                      <td>{tripIdx === 0 ? insp.bus_number : ""} {tripIdx > 0 ? `(Trip ${tripIdx + 1})` : ""}</td>
+                      <td>{arrivedTime} {arrivedTime && "ET"}</td>
+                      <td className="ok-cell">{insp.is_satisfactory ? "✓" : ""}</td>
+                      <td>{insp.num_transported || ""}</td>
+                      <td>{allRemarks}</td>
+                      <td>{insp.driver_name}</td>
+                    </tr>
+                  );
+                });
               } else {
                 return (
                   <tr key={bus.id}>
