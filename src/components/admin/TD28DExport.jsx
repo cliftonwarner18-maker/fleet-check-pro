@@ -41,7 +41,7 @@ export default function TD28DExport({ inspections, date }) {
         const remarksCell = busInspections.map((insp, idx) => {
           const allDefects = [...(insp.defects || []), ...(insp.air_brake_checks || [])];
           const defectLabels = allDefects.map(d => DEFECT_LABEL_MAP[d] || d).join(", ");
-          const allRemarks = [defectLabels, insp.concerns || "", insp.post_trip_concerns || "", insp.post_trip_remarks || ""].filter(Boolean).join(" | ");
+          const allRemarks = [defectLabels, insp.concerns || "", insp.notes_to_mechanic || "", insp.post_trip_concerns || "", insp.post_trip_remarks || ""].filter(Boolean).join(" | ");
           const border = idx < busInspections.length - 1 ? "border-bottom:1px solid #ccc;" : "";
           return `<div style="padding:6px 8px;${border}">${allRemarks || "&nbsp;"}</div>`;
         }).join("");
