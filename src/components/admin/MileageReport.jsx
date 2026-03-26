@@ -3,17 +3,22 @@ import { Button } from "@/components/ui/button";
 import { Gauge } from "lucide-react";
 import { format } from "date-fns";
 import { formatInTimeZone } from "date-fns-tz";
+import { base44 } from "@/api/base44Client";
 
 export default function MileageReport({ inspections, date }) {
+  const [buses, setBuses] = React.useState([]);
+
+  React.useEffect(() => {
+    base44.entities.Bus.filter({ is_active: true }, "bus_number").then(setBuses);
+  }, []);
+
   const displayDate = date || format(new Date(), "MM/dd/yyyy");
 
   const handlePrint = () => {
-    // Only post_trip and combined entries with an odometer_end reading
+    // Build a map of post-trip data keyed by bus_number
     const postTripEntries = inspections.filter(
       (i) => (i.inspection_type === "post_trip" || i.inspection_type === "combined") && i.odometer_end
     );
-
-    // Group by bus_number — keep last recorded entry per bus (highest odometer_end)
     const busMap = {};
     postTripEntries.forEach((insp) => {
       const existing = busMap[insp.bus_number];
@@ -22,26 +27,30 @@ export default function MileageReport({ inspections, date }) {
       }
     });
 
-    const sortedBuses = Object.values(busMap).sort((a, b) =>
-      a.bus_number.localeCompare(b.bus_number, undefined, { numeric: true })
-    );
-
-    const rows = sortedBuses.map((insp, idx) => `
-      <tr style="background:${idx % 2 === 0 ? "#fff" : "#f8f9fa"};">
-        <td style="padding:10px 14px;font-weight:bold;font-size:13px;border:1px solid #dee2e6;">${insp.bus_number}</td>
-        <td style="padding:10px 14px;font-size:13px;border:1px solid #dee2e6;">${insp.driver_name || "N/A"}</td>
-        <td style="padding:10px 14px;font-size:13px;font-weight:bold;border:1px solid #dee2e6;text-align:right;">${parseFloat(insp.odometer_end).toLocaleString()} mi</td>
-        <td style="padding:10px 14px;font-size:11px;color:#555;border:1px solid #dee2e6;">${
-          insp.post_trip_datetime
+    const rows = buses.map((bus, idx) => {
+      const insp = busMap[bus.bus_number];
+      const mileageCell = insp
+        ? `<strong>${parseFloat(insp.odometer_end).toLocaleString()} mi</strong>`
+        : `<span style="color:#bbb;">___________</span>`;
+      const driverCell = insp ? (insp.driver_name || "N/A") : `<span style="color:#bbb;">___________</span>`;
+      const timeCell = insp
+        ? (insp.post_trip_datetime
             ? formatInTimeZone(new Date(insp.post_trip_datetime), "America/New_York", "h:mm a") + " ET"
             : insp.updated_date
             ? formatInTimeZone(new Date(insp.updated_date), "America/New_York", "h:mm a") + " ET"
-            : "N/A"
-        }</td>
-      </tr>`).join("");
+            : "N/A")
+        : `<span style="color:#bbb;">___________</span>`;
+      return `
+      <tr style="background:${idx % 2 === 0 ? "#fff" : "#f8f9fa"}">
+        <td style="padding:10px 14px;font-weight:bold;font-size:13px;border:1px solid #dee2e6;">${bus.bus_number}</td>
+        <td style="padding:10px 14px;font-size:13px;border:1px solid #dee2e6;">${driverCell}</td>
+        <td style="padding:10px 14px;font-size:13px;border:1px solid #dee2e6;text-align:right;">${mileageCell}</td>
+        <td style="padding:10px 14px;font-size:11px;color:#555;border:1px solid #dee2e6;">${timeCell}</td>
+      </tr>`;
+    }).join("");
 
-    const emptyMessage = sortedBuses.length === 0
-      ? `<tr><td colspan="4" style="text-align:center;padding:30px;color:#888;font-style:italic;">No post-trip mileage recorded for this date.</td></tr>`
+    const emptyMessage = buses.length === 0
+      ? `<tr><td colspan="4" style="text-align:center;padding:30px;color:#888;font-style:italic;">No buses found in fleet.</td></tr>`
       : "";
 
     const html = `<!DOCTYPE html>
@@ -63,7 +72,7 @@ export default function MileageReport({ inspections, date }) {
   <h1>Daily Mileage Report</h1>
   <div class="subtitle">
     New Hanover County Schools • Wilmington, NC<br/>
-    <strong>Date:</strong> ${displayDate} &nbsp;|&nbsp; <strong>Total Buses Reported:</strong> ${sortedBuses.length}
+    <strong>Date:</strong> ${displayDate} &nbsp;|&nbsp; <strong>Total Buses:</strong> ${buses.length} &nbsp;|&nbsp; <strong>With Mileage:</strong> ${Object.keys(busMap).length}
   </div>
   <table>
     <thead>
