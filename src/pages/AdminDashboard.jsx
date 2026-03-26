@@ -13,6 +13,7 @@ import InspectionCard from "@/components/admin/InspectionCard";
 import InspectionDetailModal from "@/components/admin/InspectionDetailModal";
 import EditInspectionDialog from "@/components/admin/EditInspectionDialog";
 import TD28DExport from "@/components/admin/TD28DExport";
+import MileageReport from "@/components/admin/MileageReport";
 import { format } from "date-fns";
 import { formatInTimeZone } from "date-fns-tz";
 import { Calendar } from "@/components/ui/calendar";
@@ -131,6 +132,7 @@ export default function AdminDashboard() {
                 <Settings className="w-4 h-4 mr-2" /> Fleet Management
               </Button>
               <TD28DExport inspections={filtered} date={selectedDate ? format(selectedDate, "MM/dd/yyyy") : format(new Date(), "MM/dd/yyyy")} />
+              <MileageReport inspections={filtered} date={selectedDate ? format(selectedDate, "MM/dd/yyyy") : format(new Date(), "MM/dd/yyyy")} />
             </div>
           </div>
         </div>
