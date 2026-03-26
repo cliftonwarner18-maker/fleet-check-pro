@@ -33,6 +33,14 @@ export default function MileageReport({ inspections, date }) {
         ? `<strong>${parseFloat(insp.odometer_end).toLocaleString()} mi</strong>`
         : `<span style="color:#bbb;">___________</span>`;
       const driverCell = insp ? (insp.driver_name || "N/A") : `<span style="color:#bbb;">___________</span>`;
+      const odomStart = insp && insp.odometer_start ? parseFloat(insp.odometer_start) : null;
+      const odomEnd = insp && insp.odometer_end ? parseFloat(insp.odometer_end) : null;
+      const startCell = odomStart != null
+        ? `${odomStart.toLocaleString()} mi`
+        : `<span style="color:#bbb;">___________</span>`;
+      const milesCell = (odomStart != null && odomEnd != null && odomEnd >= odomStart)
+        ? `<strong style="color:#1B3A5C;">${(odomEnd - odomStart).toFixed(1)} mi</strong>`
+        : `<span style="color:#bbb;">___________</span>`;
       const timeCell = insp
         ? (insp.post_trip_datetime
             ? formatInTimeZone(new Date(insp.post_trip_datetime), "America/New_York", "h:mm a") + " ET"
@@ -40,17 +48,18 @@ export default function MileageReport({ inspections, date }) {
             ? formatInTimeZone(new Date(insp.updated_date), "America/New_York", "h:mm a") + " ET"
             : "N/A")
         : `<span style="color:#bbb;">___________</span>`;
-      return `
-      <tr style="background:${idx % 2 === 0 ? "#fff" : "#f8f9fa"}">
+      return `<tr style="background:${idx % 2 === 0 ? "#fff" : "#f8f9fa"}">
         <td style="padding:10px 14px;font-weight:bold;font-size:13px;border:1px solid #dee2e6;">${bus.bus_number}</td>
         <td style="padding:10px 14px;font-size:13px;border:1px solid #dee2e6;">${driverCell}</td>
+        <td style="padding:10px 14px;font-size:13px;border:1px solid #dee2e6;text-align:right;">${startCell}</td>
         <td style="padding:10px 14px;font-size:13px;border:1px solid #dee2e6;text-align:right;">${mileageCell}</td>
+        <td style="padding:10px 14px;font-size:13px;border:1px solid #dee2e6;text-align:right;">${milesCell}</td>
         <td style="padding:10px 14px;font-size:11px;color:#555;border:1px solid #dee2e6;">${timeCell}</td>
       </tr>`;
     }).join("");
 
     const emptyMessage = buses.length === 0
-      ? `<tr><td colspan="4" style="text-align:center;padding:30px;color:#888;font-style:italic;">No buses found in fleet.</td></tr>`
+      ? `<tr><td colspan="6" style="text-align:center;padding:30px;color:#888;font-style:italic;">No buses found in fleet.</td></tr>`
       : "";
 
     const html = `<!DOCTYPE html>
@@ -79,7 +88,9 @@ export default function MileageReport({ inspections, date }) {
       <tr>
         <th>Bus #</th>
         <th>Driver</th>
-        <th style="text-align:right;">Last Recorded Mileage</th>
+        <th style="text-align:right;">Odometer Start</th>
+        <th style="text-align:right;">Odometer End</th>
+        <th style="text-align:right;">Miles Traveled</th>
         <th>Post-Trip Time</th>
       </tr>
     </thead>
